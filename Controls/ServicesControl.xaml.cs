@@ -57,24 +57,6 @@ namespace ComputerServiceManager.Controls
                     return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(txtMinPrice.Text))
-            {
-                if (decimal.TryParse(txtMinPrice.Text, out decimal minPrice))
-                {
-                    if (service.Стоимость < minPrice)
-                        return false;
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(txtMaxPrice.Text))
-            {
-                if (decimal.TryParse(txtMaxPrice.Text, out decimal maxPrice))
-                {
-                    if (service.Стоимость > maxPrice)
-                        return false;
-                }
-            }
-
             return true;
         }
 

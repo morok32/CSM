@@ -41,21 +41,6 @@
                             <DataGridTextColumn Header="Описание" Binding="{Binding Описание}" Width="auto" MaxWidth="200"/>
                         </DataGrid.Columns>
                     </DataGrid>
-
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
-                        <GroupBox Header="Фильтры" Height="auto" Margin="0,0,10,0">
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel>
-                                    <TextBlock Text="Цена от: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                    <TextBlock Text="Цена до: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                </StackPanel>
-                                <StackPanel>
-                                    <TextBox x:Name="txtMinPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                    <TextBox x:Name="txtMaxPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
                 </Grid>
             </TabItem>
 
