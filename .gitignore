@@ -1,1 +1,6 @@
-Nothing to output - the file changes contain only source files (.xaml and .xaml.cs) which should not be ignored.
+# Visual Studio
+.vs/
+*.user
+bin/
+obj/
+packages/
