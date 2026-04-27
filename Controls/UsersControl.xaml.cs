@@ -1,21 +1,13 @@
-﻿using System;
+﻿using ComputerServiceManager.Controls;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ComputerServiceManager.Windows;
-using System.Data.Entity;
 
 namespace ComputerServiceManager.Controls
 {
@@ -55,7 +47,6 @@ namespace ComputerServiceManager.Controls
                 .Select(u => new
                 {
                     IdПользователь = u.idПользователь,
-                    ФИО = $"{u.Фамилия} {u.Имя} {u.Отчество}".Trim(),
                     Фамилия = u.Фамилия ?? "",
                     Имя = u.Имя ?? "",
                     Отчество = u.Отчество ?? "",
@@ -66,6 +57,22 @@ namespace ComputerServiceManager.Controls
                     Логин = u.Логин ?? "",
                     Пароль = u.Пароль ?? "",
                     idРоль = u.idРоль ?? -1
+                })
+                .ToList()
+                .Select(u => new
+                {
+                    u.IdПользователь,
+                    ФИО = $"{u.Фамилия} {u.Имя} {u.Отчество}".Trim(),
+                    u.Фамилия,
+                    u.Имя,
+                    u.Отчество,
+                    u.НаименованиеРоль,
+                    u.НомерТелефона,
+                    u.Email,
+                    u.Активность,
+                    u.Логин,
+                    u.Пароль,
+                    u.idРоль
                 })
                 .ToList();
 

@@ -56,12 +56,8 @@
                                               DisplayMemberPath="Наименование" 
                                               SelectionChanged="cmbFilterRole_SelectionChanged" 
                                               Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                    <ComboBox x:Name="cmbFilterActive" SelectionChanged="cmbFilterActive_SelectionChanged"
-                                              Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5">
-                                        <ComboBoxItem Content="Все" Tag="-1"/>
-                                        <ComboBoxItem Content="Активные" Tag="1"/>
-                                        <ComboBoxItem Content="Неактивные" Tag="0"/>
-                                    </ComboBox>
+                                    <CheckBox Content="" Height="20" Margin="0,3,0,0"/>
+
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
