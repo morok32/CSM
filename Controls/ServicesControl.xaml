@@ -13,32 +13,80 @@
 
         <StackPanel Orientation="Horizontal" Margin="0,0,10,5" Grid.Row="0">
             <Label Content="Поиск: " Margin="0,0,0,5"/>
-            <TextBox x:Name="searchTextBox" Width="250" Height="20" Margin="0,0,5,0"/>
-            <Button x:Name="buttonAdd" Content="Добавить" Click="AddButton_Click" Width="100" Height="20" Margin="5"/>
-            <Button x:Name="buttonEdit" Content="Открыть" Click="StartEditButton_Click" Width="100" Height="20" Margin="5"/>
-            <Button x:Name="buttonSave" Content="Сохранить" Click="SaveEditButton_Click" Width="100" Height="20" Margin="5" IsEnabled="False"/>
-            <Button x:Name="buttonDelete" Content="Удалить" Click="DeleteButton_Click" Width="100" Height="20" Margin="5"/>
+            <TextBox x:Name="searchTextBox" Width="250" Height="20" Margin="0,0,5,0" TextChanged="txtSearch_TextChanged"/>
+            <Button x:Name="buttonAdd" Content="Добавить" Click="buttonAdd_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonEdit" Content="Открыть" Click="buttonEdit_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonSave" Content="Сохранить" Click="buttonSave_Click" Width="100" Height="20" Margin="5" IsEnabled="False"/>
+            <Button x:Name="buttonDelete" Content="Удалить" Click="buttonDelete_Click" Width="100" Height="20" Margin="5"/>
         </StackPanel>
 
-        <TabControl Grid.Row="1" Margin="5">
+        <TabControl x:Name="mainTabControl" Grid.Row="1" Margin="5">
             <TabItem x:Name="tabDataGridForServices" Header="Услуги">
-                <DataGrid x:Name="ServicesDataGrid"
-                          Margin="5"
-                          AutoGenerateColumns="False" 
-                          CanUserAddRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding idУслуга}" Width="auto" MaxWidth="70"/>
-                        <DataGridTextColumn Header="Наименование" Binding="{Binding Наименование}" Width="*"/>
-                        <DataGridTextColumn Header="Цена" Binding="{Binding Стоимость, StringFormat=C}" Width="auto" MaxWidth="100"/>
-                        <DataGridTextColumn Header="Описание" Binding="{Binding Описание}" Width="auto" MaxWidth="200"/>
-                    </DataGrid.Columns>
-                </DataGrid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              Margin="5"
+                              x:Name="ServicesDataGrid"
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              SelectionChanged="ServicesDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding idУслуга}" Width="auto" MaxWidth="70"/>
+                            <DataGridTextColumn Header="Наименование" Binding="{Binding Наименование}" Width="*"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding Стоимость, StringFormat=C}" Width="auto" MaxWidth="100"/>
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Описание}" Width="auto" MaxWidth="200"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                        <GroupBox Header="Фильтры" Height="auto" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <TextBlock Text="Цена от: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Цена до: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBox x:Name="txtMinPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBox x:Name="txtMaxPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
             </TabItem>
+
             <TabItem x:Name="tabEditServices" Header="Редактирование">
-                <StackPanel>
-                    <TextBox x:Name="txtServiceName"/>
-                    <TextBox x:Name="txtServicePrice"/>
-                </StackPanel>
+                <ScrollViewer Margin="10">
+                    <StackPanel>
+                        <!-- Блок основной информации -->
+                        <GroupBox Header="Основная информация" Margin="0,0,0,5">
+                            <StackPanel Margin="5">
+                                <!-- Наименование услуги -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Наименование:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtServiceName" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <!-- Стоимость -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Стоимость:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtServicePrice" Height="20" MinWidth="200"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Описание -->
+                        <GroupBox Header="Описание" Margin="0,0,0,10">
+                            <TextBox x:Name="txtDescription"
+                                     TextWrapping="Wrap" AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto" Height="100" Margin="5"/>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
             </TabItem>
         </TabControl>
     </Grid>
