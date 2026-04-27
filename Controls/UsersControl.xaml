@@ -9,52 +9,123 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" MinHeight="300"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Margin="0,0,10,5" Grid.Row="0">
             <Label Content="Поиск: " Margin="0,0,0,5"/>
-            <TextBox x:Name="searchTextBox" Width="250" Height="20"/>
+            <TextBox x:Name="searchTextBox" Width="250" Height="20" Margin="0,0,5,0" TextChanged="txtSearch_TextChanged"/>
+            <Button x:Name="buttonAdd" Content="Добавить" Click="buttonAdd_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonEdit" Content="Открыть" Click="buttonEdit_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonSave" Content="Сохранить" Click="buttonSave_Click" Width="100" Height="20" Margin="5" IsEnabled="False"/>
+            <Button x:Name="buttonDelete" Content="Удалить" Click="buttonDelete_Click" Width="100" Height="20" Margin="5"/>
         </StackPanel>
 
-        <DataGrid Grid.Row="1"
-                  Margin="5"
-                  x:Name="UsersDataGrid"
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding idПользователь}" Width="auto" MaxWidth="70"/>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding ФИО}" Width="*"/>
-                <DataGridTextColumn Header="Роль" Binding="{Binding Роль.Наименование}" Width="auto" MaxWidth="120"/>
-                <DataGridTextColumn Header="Телефон" Binding="{Binding НомерТелефона}" Width="auto" MaxWidth="120"/>
-                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="auto" MaxWidth="150"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <TabControl x:Name="mainTabControl" Grid.Row="1" Margin="5">
+            <TabItem x:Name="tabDataGridForUsers" Header="Пользователи">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
-            <GroupBox Header="Фильтры" Height="auto" Margin="0,0,10,0">
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel>
-                        <TextBlock Text="ФИО: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                        <TextBlock Text="Роль: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                    <DataGrid Grid.Row="0"
+                              Margin="5"
+                              x:Name="UsersDataGrid"
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              SelectionChanged="UsersDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding idПользователь}" Width="auto" MaxWidth="70"/>
+                            <DataGridTextColumn Header="ФИО" Binding="{Binding ФИО}" Width="*"/>
+                            <DataGridTextColumn Header="Роль" Binding="{Binding НаименованиеРоль}" Width="auto" MaxWidth="120"/>
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding НомерТелефона}" Width="auto" MaxWidth="120"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="auto" MaxWidth="150"/>
+                            <DataGridTextColumn Header="Активность" Binding="{Binding Активность}" Width="auto" MaxWidth="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                        <GroupBox Header="Фильтры" Height="auto" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <TextBlock Text="По роли: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Активность: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <ComboBox x:Name="cmbFilterRole" SelectedValuePath="idРоль" 
+                                              DisplayMemberPath="Наименование" 
+                                              SelectionChanged="cmbFilterRole_SelectionChanged" 
+                                              Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <ComboBox x:Name="cmbFilterActive" SelectionChanged="cmbFilterActive_SelectionChanged"
+                                              Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5">
+                                        <ComboBoxItem Content="Все" Tag="-1"/>
+                                        <ComboBoxItem Content="Активные" Tag="1"/>
+                                        <ComboBoxItem Content="Неактивные" Tag="0"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="tabEditUsers" Header="Редактирование">
+                <ScrollViewer Margin="10">
                     <StackPanel>
-                        <TextBox x:Name="txtUserName" Width="200" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                        <ComboBox x:Name="cmbUserRole" SelectedValuePath="idРоль" 
-                          DisplayMemberPath="Наименование" 
-                          SelectionChanged="cmbUserRole_SelectionChanged" 
-                          Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <GroupBox Header="Основная информация" Margin="0,0,0,5">
+                            <StackPanel Margin="5">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Роль:" Width="120" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cmbxRole"
+                                              SelectedValuePath="idРоль"
+                                              DisplayMemberPath="Наименование"
+                                              MinHeight="24" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Фамилия:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtLastName" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Имя:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtFirstName" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Отчество:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtMiddleName" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Email:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtEmail" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Телефон:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtPhone" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Логин:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtLogin" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Пароль:" Width="120" VerticalAlignment="Center"/>
+                                    <PasswordBox x:Name="txtPassword" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Активность:" Width="120" VerticalAlignment="Center"/>
+                                    <CheckBox x:Name="chkActive" IsChecked="True" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Управление" Height="auto">
-                <StackPanel>
-                    <Button x:Name="buttonAdd" Content="Добавить" Click="buttonAdd_Click" Width="100" Height="20" Margin="5"/>
-                    <Button x:Name="buttonEdit" Content="Изменить" Click="buttonEdit_Click" Width="100" Height="20" Margin="5"/>
-                    <Button x:Name="buttonSave" Content="Сохранить" Click="buttonSave_Click" Width="100" Height="20" Margin="5" Visibility="Collapsed"/>
-                    <Button x:Name="buttonDelete" Content="Удалить" Click="buttonDelete_Click" Width="100" Height="20" Margin="5"/>
-                </StackPanel>
-            </GroupBox>
-        </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>
