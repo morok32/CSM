@@ -107,17 +107,17 @@ namespace ComputerServiceManager.Controls
                     return false;
             }
 
-            var selectedActiveItem = cmbFilterActive.SelectedItem as ComboBoxItem;
-            if (selectedActiveItem != null)
-            {
-                int activeTag = (int)(selectedActiveItem.Tag ?? -1);
-                if (activeTag != -1)
-                {
-                    bool isActive = activeTag == 1;
-                    if (row.Активность != isActive)
-                        return false;
-                }
-            }
+            //var selectedActiveItem = cmbFilterActive.SelectedItem as ComboBoxItem;
+            //if (selectedActiveItem != null)
+            //{
+            //    int activeTag = (int)(selectedActiveItem.Tag ?? -1);
+            //    if (activeTag != -1)
+            //    {
+            //        bool isActive = activeTag == 1;
+            //        if (row.Активность != isActive)
+            //            return false;
+            //    }
+            //}
 
             return true;
         }
@@ -176,28 +176,6 @@ namespace ComputerServiceManager.Controls
                     mainTabControl.SelectedItem = tabEditUsers;
                 }
             }
-        }
-
-        private void buttonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            _currentUser = new Пользователь
-            {
-                Активность = true
-            };
-
-            cmbxRole.SelectedIndex = 0;
-            txtLastName.Text = "";
-            txtFirstName.Text = "";
-            txtMiddleName.Text = "";
-            txtEmail.Text = "";
-            txtPhone.Text = "";
-            txtLogin.Text = "";
-            txtPassword.Password = "";
-            chkActive.IsChecked = true;
-
-            _isEditing = true;
-            buttonSave.IsEnabled = true;
-            mainTabControl.SelectedItem = tabEditUsers;
         }
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
@@ -293,6 +271,16 @@ namespace ComputerServiceManager.Controls
             _isEditing = false;
             buttonSave.IsEnabled = false;
             mainTabControl.SelectedItem = tabDataGridForUsers;
+
+            cmbxRole.SelectedValue = 0;
+            txtLastName.Text = "";
+            txtFirstName.Text = "";
+            txtMiddleName.Text = "";
+            txtEmail.Text = "";
+            txtPhone.Text = "";
+            txtLogin.Text = "";
+            txtPassword.Password = "";
+            chkActive.IsChecked = false;
         }
 
         private void UsersDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -305,6 +293,11 @@ namespace ComputerServiceManager.Controls
                     UsersDataGrid.SelectedItem = null;
                 }
             }
+        }
+
+        private void buttonClean_Click(object sender, RoutedEventArgs e)
+        {
+            ClearForm();
         }
     }
 }

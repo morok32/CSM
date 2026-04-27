@@ -166,11 +166,11 @@ namespace ComputerServiceManager.Controls
             OnFilterChanged();
         }
 
-        private void btnResetDatePicker_Click(object sender, RoutedEventArgs e)
-        {
-            dateFromDatePickerForMaterials.SelectedDate = null;
-            OnFilterChanged();
-        }
+        //private void btnResetDatePicker_Click(object sender, RoutedEventArgs e)
+        //{
+        //    dateFromDatePickerForMaterials.SelectedDate = null;
+        //    OnFilterChanged();
+        //}
 
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
@@ -206,28 +206,6 @@ namespace ComputerServiceManager.Controls
                     mainTabControl.SelectedItem = tabEditMaterials;
                 }
             }
-        }
-
-        private void buttonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            _currentMaterial = new Материал
-            {
-                ДатаДобавления = DateTime.Now
-            };
-            _currentMaterial.Склад.Add(new Склад { Количество = 0 });
-
-            cmbxTypeMaterial.SelectedIndex = 0;
-            txtModel.Text = "";
-            txtSerialNumber.Text = "";
-            datePickerDateAdded.SelectedDate = DateTime.Now;
-            txtQuantity.Text = "0";
-            txtBasePrice.Text = "";
-            txtRetailPrice.Text = "";
-            txtDescription.Text = "";
-
-            _isEditing = true;
-            buttonSave.Visibility = Visibility.Visible;
-            mainTabControl.SelectedItem = tabEditMaterials;
         }
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
@@ -329,6 +307,15 @@ namespace ComputerServiceManager.Controls
             _isEditing = false;
             buttonSave.Visibility = Visibility.Collapsed;
             mainTabControl.SelectedItem = tabDataGridForMaterials;
+
+            cmbxTypeMaterial.SelectedIndex = 0;
+            txtModel.Text = "";
+            txtSerialNumber.Text = "";
+            datePickerDateAdded.SelectedDate = DateTime.Now;
+            txtQuantity.Text = "0";
+            txtBasePrice.Text = "";
+            txtRetailPrice.Text = "";
+            txtDescription.Text = "";
         }
 
         private void MaterialsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -341,6 +328,11 @@ namespace ComputerServiceManager.Controls
                     MaterialsDataGrid.SelectedItem = null;
                 }
             }
+        }
+
+        private void buttonClean_Click(object sender, RoutedEventArgs e)
+        {
+            ClearForm();
         }
     }
 }

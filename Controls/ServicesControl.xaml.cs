@@ -101,19 +101,6 @@ namespace ComputerServiceManager.Controls
             }
         }
 
-        private void buttonAdd_Click(object sender, RoutedEventArgs e)
-        {
-            _currentService = new Услуги();
-
-            txtServiceName.Text = "";
-            txtServicePrice.Text = "";
-            txtDescription.Text = "";
-
-            _isEditing = true;
-            buttonSave.IsEnabled = true;
-            mainTabControl.SelectedItem = tabEditServices;
-        }
-
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
             StringBuilder errors = new StringBuilder();
@@ -194,6 +181,9 @@ namespace ComputerServiceManager.Controls
             _isEditing = false;
             buttonSave.IsEnabled = false;
             mainTabControl.SelectedItem = tabDataGridForServices;
+            txtServiceName.Text = "";
+            txtServicePrice.Text = "";
+            txtDescription.Text = "";
         }
 
         private void ServicesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -206,6 +196,11 @@ namespace ComputerServiceManager.Controls
                     ServicesDataGrid.SelectedItem = null;
                 }
             }
+        }
+
+        private void buttonClean_Click(object sender, RoutedEventArgs e)
+        {
+            ClearForm();
         }
     }
 }
