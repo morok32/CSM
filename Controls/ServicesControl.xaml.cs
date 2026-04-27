@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,232 +14,212 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ComputerServiceManager.Windows;
+using System.Data.Entity;
 
 namespace ComputerServiceManager.Controls
 {
-    /// <summary>
-    /// Логика взаимодействия для ServicesControl.xaml
-    /// </summary>
     public partial class ServicesControl : UserControl
     {
-        private ComputerServiceManagerEntities context;
-        private Услуги editingService; // Текущая редактируемая услуга
-        private bool isDirty = false; // Были ли изменения
+        private ICollectionView _servicesView;
+        private List<Услуги> _fullServicesData;
+        private Услуги _currentService;
+        private bool _isEditing;
 
         public ServicesControl()
         {
             InitializeComponent();
-            LoadServices();
-    
+            LoadData();
         }
 
-        private void LoadServices()
+        public void LoadData()
         {
-            using (context = new ComputerServiceManagerEntities())
+            var context = ComputerServiceManagerEntities.GetContext();
+
+            _fullServicesData = context.Услуги
+                .AsNoTracking()
+                .ToList();
+
+            _servicesView = CollectionViewSource.GetDefaultView(_fullServicesData);
+            _servicesView.Filter = FilterServices;
+            ServicesDataGrid.ItemsSource = _servicesView;
+        }
+
+        private bool FilterServices(object item)
+        {
+            var service = item as Услуги;
+            if (service == null) return false;
+
+            if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
-                ServicesDataGrid.ItemsSource = context.Услуги.ToList();
+                var searchText = searchTextBox.Text.ToLower();
+                if (!service.Наименование.ToLower().Contains(searchText))
+                    return false;
             }
-        }
 
-        private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void ApplyFilters()
-        {
-            using (context = new ComputerServiceManagerEntities())
+            if (!string.IsNullOrWhiteSpace(txtMinPrice.Text))
             {
-                var query = context.Услуги.AsQueryable();
-
-               
-
-                ServicesDataGrid.ItemsSource = query.ToList();
-            }
-        }
-
-        //private void ServicesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    if (ServicesDataGrid.SelectedItem is Услуги selectedService)
-        //    {
-        //        txtServiceName.Text = selectedService.Наименование;
-        //        txtServicePrice.Text = selectedService.Стоимость?.ToString() ?? string.Empty;
-        //        editingService = selectedService;
-        //    }
-        //}
-
-        private void StartEditButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (ServicesDataGrid.SelectedItem is Услуги selectedService)
-            {
-                if (selectedService != null)
+                if (decimal.TryParse(txtMinPrice.Text, out decimal minPrice))
                 {
-                    txtServiceName.Text = selectedService.Наименование;
-                    txtServicePrice.Text = selectedService.Стоимость?.ToString() ?? string.Empty;
-                    editingService = selectedService;
-                }
-                else
-                {
-                    MessageBox.Show("Выберите услугу для редактирования.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (service.Стоимость < minPrice)
+                        return false;
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(txtMaxPrice.Text))
+            {
+                if (decimal.TryParse(txtMaxPrice.Text, out decimal maxPrice))
+                {
+                    if (service.Стоимость > maxPrice)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void OnFilterChanged()
+        {
+            _servicesView?.Refresh();
+        }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            OnFilterChanged();
+        }
+
+        private void cmbFilterTypeMaterial_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnFilterChanged();
+        }
+
+        private void buttonEdit_Click(object sender, RoutedEventArgs e)
+        {
             if (ServicesDataGrid.SelectedItem == null)
             {
-                MessageBox.Show("Выберите материал для редактирования");
+                MessageBox.Show("Выберите услугу для редактирования");
                 return;
             }
 
-            var selectedRow = ServicesDataGrid.SelectedItem as dynamic;
-            int materialId = (int)selectedRow.IdМатериала;
+            _currentService = ServicesDataGrid.SelectedItem as Услуги;
 
-            using (var context = new ComputerServiceManagerEntities())
+            if (_currentService != null)
             {
-                _currentServices = context.Материал
-                    .Include("ТипМатериала")
-                    .Include("Склад")
-                    .FirstOrDefault(m => m.idМатериал == materialId);
+                txtServiceName.Text = _currentService.Наименование;
+                txtServicePrice.Text = _currentService.Стоимость?.ToString() ?? "";
+                txtDescription.Text = _currentService.Описание;
 
-                if (_currentServices != null)
+                _isEditing = true;
+                buttonSave.IsEnabled = true;
+                mainTabControl.SelectedItem = tabEditServices;
+            }
+        }
+
+        private void buttonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            _currentService = new Услуги();
+
+            txtServiceName.Text = "";
+            txtServicePrice.Text = "";
+            txtDescription.Text = "";
+
+            _isEditing = true;
+            buttonSave.IsEnabled = true;
+            mainTabControl.SelectedItem = tabEditServices;
+        }
+
+        private void buttonSave_Click(object sender, RoutedEventArgs e)
+        {
+            StringBuilder errors = new StringBuilder();
+
+            if (string.IsNullOrWhiteSpace(txtServiceName.Text))
+                errors.AppendLine("- Укажите наименование услуги.");
+            if (string.IsNullOrWhiteSpace(txtServicePrice.Text))
+                errors.AppendLine("- Укажите стоимость услуги.");
+
+            if (errors.Length > 0)
+            {
+                MessageBox.Show($"Исправьте ошибки:\n{errors}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                _currentService.Наименование = txtServiceName.Text;
+
+                if (decimal.TryParse(txtServicePrice.Text, out decimal price))
+                    _currentService.Стоимость = price;
+
+                _currentService.Описание = txtDescription.Text;
+
+                using (var context = new ComputerServiceManagerEntities())
                 {
-                    cmbxTypeMaterial.SelectedValue = _currentMaterial.idТипМатериала;
-                    txtModel.Text = _currentMaterial.Наименование;
-                    //txtSerialNumber.Text = _currentMaterial.СерийныйНомер;
-                    datePickerDateAdded.SelectedDate = _currentMaterial.ДатаДобавления;
-                    txtQuantity.Text = _currentMaterial.Склад.FirstOrDefault()?.Количество.ToString() ?? "0";
-                    txtBasePrice.Text = _currentMaterial.БазоваяСтоимость?.ToString() ?? "";
-                    txtRetailPrice.Text = _currentMaterial.РозничнаяЦена?.ToString() ?? "";
-                    txtDescription.Text = _currentMaterial.Описание;
+                    if (_currentService.idУслуга == 0)
+                        context.Услуги.Add(_currentService);
+                    else
+                        context.Entry(_currentService).State = EntityState.Modified;
 
-                    _isEditing = true;
-                    buttonSave.IsEnabled = true;
-                    mainTabControl.SelectedItem = tabEditMaterials;
+                    context.SaveChanges();
+                }
+
+                LoadData();
+                ClearForm();
+                MessageBox.Show("Услуга сохранена успешно", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void buttonDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (ServicesDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("Выберите услугу для удаления");
+                return;
+            }
+
+            var selectedService = ServicesDataGrid.SelectedItem as Услуги;
+            int serviceId = (int)selectedService.idУслуга;
+
+            if (MessageBox.Show("Удалить услугу?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                using (var context = new ComputerServiceManagerEntities())
+                {
+                    var service = context.Услуги.FirstOrDefault(s => s.idУслуга == serviceId);
+
+                    if (service != null)
+                    {
+                        context.Услуги.Remove(service);
+                        context.SaveChanges();
+
+                        LoadData();
+                        if (_currentService?.idУслуга == serviceId)
+                            ClearForm();
+                    }
                 }
             }
         }
 
         private void ClearForm()
         {
-            _currentMaterial = null;
+            _currentService = null;
             _isEditing = false;
-            buttonSave.Visibility = Visibility.Collapsed;
-            mainTabControl.SelectedItem = tabDataGridForMaterials;
+            buttonSave.IsEnabled = false;
+            mainTabControl.SelectedItem = tabDataGridForServices;
         }
 
-        private void SaveEditButton_Click(object sender, RoutedEventArgs e)
+        private void ServicesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (editingService != null)
+            if (_isEditing && mainTabControl.SelectedItem == tabEditServices)
             {
-                using (context = new ComputerServiceManagerEntities())
+                if (MessageBox.Show("Закрыть форму редактирования?", "Подтверждение",
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
-                    var serviceToUpdate = context.Услуги.Find(editingService.idУслуга);
-                    if (serviceToUpdate != null)
-                    {
-                        serviceToUpdate.Наименование = txtServiceName.Text;
-                        serviceToUpdate.Стоимость = decimal.Parse(txtServicePrice.Text);
-                        context.SaveChanges();
-                        LoadServices();
-                        ClearInputs();
-                    }
+                    ServicesDataGrid.SelectedItem = null;
                 }
             }
-        }
-
-        private void AddButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (editingService != null)
-            {
-                // Предупреждение о текущем редактировании
-                MessageBoxResult result = MessageBox.Show(
-                    "Прервать редактирование и создать новую запись?",
-                    "Подтверждение",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    editingService = null; // Сброс редактирования
-                }
-                else
-                {
-                    return; // Отмена добавления
-                }
-            }
-
-            try
-            {
-                using (context = new ComputerServiceManagerEntities())
-                {
-                    var service = new Услуги
-                    {
-                        Наименование = txtServiceName.Text,
-                        Стоимость = decimal.Parse(txtServicePrice.Text)
-                    };
-                    context.Услуги.Add(service);
-                    context.SaveChanges();
-                    LoadServices();
-                    ClearInputs();
-                }
-            }
-            catch (FormatException)
-            {
-                MessageBox.Show("Введите корректную стоимость услуги.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            using (var context = new ComputerServiceManagerEntities())
-            {
-                if (ServicesDataGrid.SelectedItem is Услуги selectedService)
-                {
-                    try
-                    {
-                        var serviceToDelete = context.Услуги.Find(selectedService.idУслуга);
-
-                        if (serviceToDelete != null)
-                        {
-                            try
-                            {
-                                MessageBoxResult result = MessageBox.Show(
-                                    "Вы уверены, что хотите удалить услугу?",
-                                    "Подтверждение удаления",
-                                    MessageBoxButton.YesNo,
-                                    MessageBoxImage.Question);
-
-                                if (result == MessageBoxResult.Yes)
-                                {
-                                    context.Услуги.Remove(serviceToDelete);
-                                    context.SaveChanges();
-                                    LoadServices();
-                                    ClearInputs();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                            }
-
-                        }
-                        else
-                        {
-                            MessageBox.Show("Услуга не найдена в базе данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-        }
-
-        private void ClearInputs()
-        {
-            txtServiceName.Clear();
-            txtServicePrice.Clear();
-            editingService = null;
-            ServicesDataGrid.SelectedIndex = -1;
         }
     }
 }
