@@ -1,0 +1,137 @@
+﻿<UserControl x:Class="ComputerServiceManager.Controls.MaterialsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             MinHeight="450" MinWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" MinHeight="300"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,10,5" Grid.Row="0">
+            <Label Content="Поиск: " Margin="0,0,0,5"/>
+            <TextBox x:Name="searchTextBox" Width="250" Height="20" Margin="0,0,5,0" TextChanged="txtSearch_TextChanged"/>
+            <Button x:Name="buttonAdd" Content="Добавить" Click="buttonAdd_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonEdit" Content="Открыть" Click="buttonEdit_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonSave" Content="Сохранить" Click="buttonSave_Click" Width="100" Height="20" Margin="5" Visibility="Collapsed"/>
+            <Button x:Name="buttonDelete" Content="Удалить" Click="buttonDelete_Click" Width="100" Height="20" Margin="5"/>
+        </StackPanel>
+
+        <TabControl x:Name="mainTabControl" Grid.Row="1" Margin="5">
+            <TabItem x:Name="tabDataGridForMaterials" Header="Материалы">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid Grid.Row="0"
+                              Margin="5"
+                              x:Name="MaterialsDataGrid"
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              SelectionChanged="MaterialsDataGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding IdМатериала}" Width="auto" MaxWidth="70"/>
+                            <DataGridTextColumn Header="Наименование" Binding="{Binding НаименованиеМатериала}" Width="*"/>
+                            <DataGridTextColumn Header="Тип" Binding="{Binding НаименованиеТипа}" Width="auto" MaxWidth="120"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding РозничнаяЦена, StringFormat=C}" Width="auto" MaxWidth="100"/>
+                            <DataGridTextColumn Header="Количество" Binding="{Binding Количество}" Width="auto" MaxWidth="80"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                        <GroupBox Header="Фильтры" Height="auto" Margin="0,0,10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel>
+                                    <TextBlock Text="По типу: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Дата добавления: " Height="25" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Цена от: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBlock Text="Цена до: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <ComboBox x:Name="cmbFilterTypeMaterial" SelectedValuePath="idТипМатериала" 
+                                              DisplayMemberPath="Наименование" 
+                                              SelectionChanged="cmbFilterTypeMaterial_SelectionChanged" 
+                                              Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <DockPanel>
+                                        <DatePicker x:Name="dateFromDatePickerForMaterials" SelectedDateChanged="cmbFilterTypeMaterial_SelectionChanged" 
+                                                    Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,5,5"/>
+                                        <Button x:Name="btnResetFilters" Content="Сброс" Height="25" 
+                                                HorizontalAlignment="Left" Click="btnResetDatePicker_Click" VerticalAlignment="Top"/>
+                                    </DockPanel>
+                                    <TextBox x:Name="txtMinPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <TextBox x:Name="txtMaxPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem x:Name="tabEditMaterials" Header="Редактирование">
+                <ScrollViewer Margin="10">
+                    <StackPanel>
+                        <!-- Блок основной информации -->
+                        <GroupBox Header="Основная информация" Margin="0,0,0,5">
+                            <StackPanel Margin="5">
+                                <!-- Тип материала -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Тип:" Width="120" VerticalAlignment="Center"/>
+                                    <ComboBox x:Name="cmbxTypeMaterial"
+                                              SelectedValuePath="idТипМатериала"
+                                              DisplayMemberPath="Наименование"
+                                              MinHeight="24" MinWidth="200"/>
+                                </StackPanel>
+
+                                <!-- Наименование -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                    <Label Content="Наименование:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtModel" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <!-- Серийный номер -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                    <Label Content="Серийный номер:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtSerialNumber" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <!-- Дата добавления -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                    <Label Content="Дата добавления:" Width="120" VerticalAlignment="Center"/>
+                                    <DatePicker x:Name="datePickerDateAdded" MinHeight="24" MinWidth="200"/>
+                                </StackPanel>
+
+                                <!-- Количество -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                                    <Label Content="Количество:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtQuantity" Height="20" MinWidth="200"/>
+                                </StackPanel>
+
+                                <!-- Цена -->
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Базовая стоимость:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtBasePrice" Height="20" MinWidth="200"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Розничная стоимость:" Width="120" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtRetailPrice" Height="20" MinWidth="200"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Описание -->
+                        <GroupBox Header="Описание" Margin="0,0,0,10">
+                            <TextBox x:Name="txtDescription"
+                                     TextWrapping="Wrap" AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto" Height="100" Margin="5"/>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

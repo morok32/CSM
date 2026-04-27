@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="ComputerServiceManager.Controls.OrdersControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             MinHeight="450" MinWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" MinHeight="300"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,10,5" Grid.Row="0">
+            <Label Content="Поиск: " Margin="0,0,0,5"/>
+            <TextBox x:Name="searchTextBox" Width="250" Height="20"/>
+            <Button x:Name="buttonAdd" Content="Добавить" Click="buttonAdd_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonEdit" Content="Изменить" Click="buttonEdit_Click" Width="100" Height="20" Margin="5"/>
+            <Button x:Name="buttonDelete" Content="Удалить" Click="buttonDelete_Click" Width="100" Height="20" Margin="5"/>
+        </StackPanel>
+        
+        <DataGrid Grid.Row="1"
+                  Margin="5"
+                  x:Name="OrdersDataGrid"
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding idЗаказ}" Width="auto" MaxWidth="70"/>
+                <DataGridTextColumn Header="Устройство" Binding="{Binding ИмяУстройства}" Width="auto" MaxWidth="120"/>
+                <DataGridTextColumn Header="Клиент" Binding="{Binding Клиент.ФИО}" Width="auto" MaxWidth="150"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Статус.Наименование}" Width="auto" MaxWidth="100"/>
+                <DataGridTextColumn Header="Техник" Binding="{Binding Пользователь.ФИО}" Width="auto" MaxWidth="150"/>
+                <DataGridTextColumn Header="Тип" Binding="{Binding ТипУстройства.Наименование}" Width="auto" MaxWidth="100"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding ДатаЗаказа, StringFormat=d}" Width="auto" MaxWidth="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="5">
+            <GroupBox Header="Фильтры" Height="auto" Margin="0,0,10,0">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock Text="По статусу: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <TextBlock Text="По типу: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <TextBlock Text="Дата от: " Height="25" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ComboBox x:Name="cmbFilterStatus" SelectedValuePath="idСтатус" 
+                          DisplayMemberPath="Наименование" 
+                          SelectionChanged="cmbFilterStatus_SelectionChanged" 
+                          Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="cmbFilterTypeDevice" SelectedValuePath="idТипУстройства" 
+                          DisplayMemberPath="Наименование" 
+                          SelectionChanged="cmbFilterStatus_SelectionChanged" 
+                          Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                        <DockPanel>
+                            <DatePicker x:Name="dateFromDatePicker" SelectedDateChanged="cmbFilterStatus_SelectionChanged" 
+                            Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,5,5"/>
+                            <Button x:Name="btnResetFilters" Content="Сброс" Height="25" 
+                            HorizontalAlignment="Left" Click="btnResetDatePicker_Click" VerticalAlignment="Top"/>
+                        </DockPanel>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

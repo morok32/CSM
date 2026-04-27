@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a365d82de13a43fe930b2f2fe145d1a2" Name="Diagram1">
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.ЕдиницыИзмерения" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.ЖурналДействий" Width="1.5" PointX="5.25" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Заказ" Width="1.5" PointX="8.25" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Клиент" Width="1.5" PointX="6" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Материал" Width="1.5" PointX="3" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Платеж" Width="1.5" PointX="12.75" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Пользователь" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Роль" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Склад" Width="1.5" PointX="5.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.СоставЗаказа_Материалы" Width="1.5" PointX="10.5" PointY="7.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.СоставЗаказа_Услуги" Width="1.5" PointX="13.5" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.СпособОплаты" Width="1.5" PointX="10.5" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Статус" Width="1.5" PointX="6" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Счет" Width="1.5" PointX="10.5" PointY="14.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.ТипМатериала" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.ТипСтатуса" Width="1.5" PointX="3.75" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.ТипУстройства" Width="1.5" PointX="6" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="ComputerServiceManagerModel.Услуги" Width="1.5" PointX="11.25" PointY="3.875" IsExpanded="true" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Материал_ЕдиницыИзмерения" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Движения_Заказ" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Движения_Материал" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Движения_Пользователь" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Заказ_Клиент" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Заказ_Пользователь" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Заказ_Статус1" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Заказ_ТипУстройства" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_СЗМ_Заказ" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_СЗУ_Заказ" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Счет_Заказ" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Материал_ТипМатериала" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_СЗМ_Материал" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_СкладскиеОстатки_Материал" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Платеж_СпособОплаты" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Платеж_Счет" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Пользователь_Роль" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_СоставЗаказа_Материалы_Статус" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_СЗУ_Услуга" ManuallyRouted="false" />
+        <AssociationConnector Association="ComputerServiceManagerModel.FK_Статус_ТипСтатусаМатериала" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
