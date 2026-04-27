@@ -63,7 +63,35 @@ namespace ComputerServiceManager.Controls
                 })
                 .ToList();
 
-            _fullCombinedData = combinedData.Cast<object>().ToList();
+            // Рассчитываем доступное количество для каждого материала
+            var resultWithAvailable = combinedData.Select(item =>
+            {
+                int materialId = item.IdМатериала;
+                decimal physicalQuantity = item.Количество;
+
+                // Считаем сумму всех активных резервов (idСтатус=8) по этому материалу
+                decimal totalReserved = context.СоставЗаказа_Материалы
+                    .Where(m => m.idМатериал == materialId && m.idСтатус == 8)
+                    .Sum(m => (decimal?)m.Количество) ?? 0;
+
+                // Доступно = физическое - зарезервировано
+                decimal available = physicalQuantity - totalReserved;
+
+                return new
+                {
+                    item.IdОстатка,
+                    item.Количество,
+                    item.НаименованиеМатериала,
+                    item.БазоваяСтоимость,
+                    item.НаименованиеТипа,
+                    item.IdМатериала,
+                    item.РозничнаяЦена,
+                    item.Описание,
+                    Доступно = available
+                };
+            }).ToList();
+
+            _fullCombinedData = resultWithAvailable.Cast<object>().ToList();
             _materialStockView = CollectionViewSource.GetDefaultView(_fullCombinedData);
             _materialStockView.Filter = FilterMaterialStock;
             MaterialsDataGrid.ItemsSource = _materialStockView;
@@ -151,7 +179,7 @@ namespace ComputerServiceManager.Controls
                     txtDescription.Text = _currentMaterial.Описание;
 
                     _isEditing = true;
-                    buttonSave.Visibility = Visibility.Visible;
+                    buttonSave.IsEnabled = true;
                     mainTabControl.SelectedItem = tabEditMaterials;
                 }
             }

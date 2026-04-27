@@ -81,6 +81,47 @@ namespace ComputerServiceManager.Controls
                     MessageBox.Show("Выберите услугу для редактирования.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
+
+            if (ServicesDataGrid.SelectedItem == null)
+            {
+                MessageBox.Show("Выберите материал для редактирования");
+                return;
+            }
+
+            var selectedRow = ServicesDataGrid.SelectedItem as dynamic;
+            int materialId = (int)selectedRow.IdМатериала;
+
+            using (var context = new ComputerServiceManagerEntities())
+            {
+                _currentServices = context.Материал
+                    .Include("ТипМатериала")
+                    .Include("Склад")
+                    .FirstOrDefault(m => m.idМатериал == materialId);
+
+                if (_currentServices != null)
+                {
+                    cmbxTypeMaterial.SelectedValue = _currentMaterial.idТипМатериала;
+                    txtModel.Text = _currentMaterial.Наименование;
+                    //txtSerialNumber.Text = _currentMaterial.СерийныйНомер;
+                    datePickerDateAdded.SelectedDate = _currentMaterial.ДатаДобавления;
+                    txtQuantity.Text = _currentMaterial.Склад.FirstOrDefault()?.Количество.ToString() ?? "0";
+                    txtBasePrice.Text = _currentMaterial.БазоваяСтоимость?.ToString() ?? "";
+                    txtRetailPrice.Text = _currentMaterial.РозничнаяЦена?.ToString() ?? "";
+                    txtDescription.Text = _currentMaterial.Описание;
+
+                    _isEditing = true;
+                    buttonSave.IsEnabled = true;
+                    mainTabControl.SelectedItem = tabEditMaterials;
+                }
+            }
+        }
+
+        private void ClearForm()
+        {
+            _currentMaterial = null;
+            _isEditing = false;
+            buttonSave.Visibility = Visibility.Collapsed;
+            mainTabControl.SelectedItem = tabDataGridForMaterials;
         }
 
         private void SaveEditButton_Click(object sender, RoutedEventArgs e)
