@@ -14,7 +14,7 @@
 
         <StackPanel Orientation="Horizontal" Margin="0,0,10,5" Grid.Row="0">
             <Label Content="Поиск: " Margin="0,0,0,5"/>
-            <TextBox x:Name="searchTextBox" Width="250" Height="20"/>
+            <TextBox x:Name="searchTextBox" Width="250" Height="20" TextChanged="searchTextBox_TextChanged"/>
             <Button x:Name="buttonAdd" Content="Добавить" Click="buttonAdd_Click" Width="100" Height="20" Margin="5"/>
             <Button x:Name="buttonEdit" Content="Открыть" Click="buttonEdit_Click" Width="100" Height="20" Margin="5"/>
             <Button x:Name="buttonDelete" Content="Удалить" Click="buttonDelete_Click" Width="100" Height="20" Margin="5"/>

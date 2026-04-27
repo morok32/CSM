@@ -53,7 +53,11 @@ namespace ComputerServiceManager.Controls
             if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
                 var searchText = searchTextBox.Text.ToLower();
-                if (!service.Наименование.ToLower().Contains(searchText))
+                // Поиск по наименованию и описанию
+                bool matchesName = service.Наименование?.ToLower().Contains(searchText) == true;
+                bool matchesDescription = service.Описание?.ToLower().Contains(searchText) == true;
+                
+                if (!matchesName && !matchesDescription)
                     return false;
             }
 

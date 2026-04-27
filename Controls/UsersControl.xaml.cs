@@ -87,12 +87,16 @@ namespace ComputerServiceManager.Controls
             var row = item as dynamic;
             if (row == null) return false;
 
+            // Поиск по всем полям
             if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
                 var searchText = searchTextBox.Text.ToLower();
                 if (!row.ФИО.ToString().ToLower().Contains(searchText) &&
                     !row.Email.ToString().ToLower().Contains(searchText) &&
-                    !row.НомерТелефона.ToString().ToLower().Contains(searchText))
+                    !row.НомерТелефона.ToString().ToLower().Contains(searchText) &&
+                    !row.НаименованиеРоль.ToString().ToLower().Contains(searchText) &&
+                    !row.Логин.ToString().ToLower().Contains(searchText) &&
+                    !row.IdПользователь.ToString().Contains(searchText))
                     return false;
             }
 

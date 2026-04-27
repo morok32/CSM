@@ -103,6 +103,7 @@ namespace ComputerServiceManager.Controls
             var row = item as dynamic;
             if (row == null) return false;
 
+            // Поиск по названию материала
             if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
                 var searchText = searchTextBox.Text.ToLower();
@@ -117,12 +118,24 @@ namespace ComputerServiceManager.Controls
                     return false;
             }
 
-            if (dateFromDatePickerForMaterials.SelectedDate.HasValue)
+            // Фильтр по минимальной цене
+            if (!string.IsNullOrWhiteSpace(txtMinPrice.Text))
             {
-                DateTime selectedDate = dateFromDatePickerForMaterials.SelectedDate.Value.Date;
-                var materialAddedDate = row.ДатаДобавления;
-                if (materialAddedDate == null || ((DateTime?)materialAddedDate)?.Date != selectedDate)
-                    return false;
+                if (decimal.TryParse(txtMinPrice.Text, out decimal minPrice))
+                {
+                    if (row.РозничнаяЦена < minPrice)
+                        return false;
+                }
+            }
+
+            // Фильтр по максимальной цене
+            if (!string.IsNullOrWhiteSpace(txtMaxPrice.Text))
+            {
+                if (decimal.TryParse(txtMaxPrice.Text, out decimal maxPrice))
+                {
+                    if (row.РозничнаяЦена > maxPrice)
+                        return false;
+                }
             }
 
             return true;
@@ -139,6 +152,16 @@ namespace ComputerServiceManager.Controls
         }
 
         private void cmbFilterTypeMaterial_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OnFilterChanged();
+        }
+
+        private void txtMinPrice_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            OnFilterChanged();
+        }
+
+        private void txtMaxPrice_TextChanged(object sender, TextChangedEventArgs e)
         {
             OnFilterChanged();
         }

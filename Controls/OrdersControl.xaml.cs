@@ -70,12 +70,18 @@ namespace ComputerServiceManager.Controls
             if (!(item is Заказ order))
                 return false;
 
-            // Фильтр по тексту
+            // Фильтр по тексту (поиск по технику, клиенту, устройству)
             string searchText = searchTextBox.Text.Trim().ToLower();
-            if (!string.IsNullOrEmpty(searchText) &&
-                !order.ИмяУстройства?.ToLower().Contains(searchText) == true)
+            if (!string.IsNullOrEmpty(searchText))
             {
-                return false;
+                bool matchesDevice = order.ИмяУстройства?.ToLower().Contains(searchText) == true;
+                bool matchesClient = order.Клиент?.ФИО?.ToLower().Contains(searchText) == true;
+                bool matchesTechnician = order.Пользователь?.ФИО?.ToLower().Contains(searchText) == true;
+                
+                if (!matchesDevice && !matchesClient && !matchesTechnician)
+                {
+                    return false;
+                }
             }
 
             // Фильтр по статусу
@@ -103,6 +109,11 @@ namespace ComputerServiceManager.Controls
             }
 
             return true;
+        }
+
+        private void searchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _ordersView.Refresh();
         }
 
         private void buttonBack_Click(object sender, RoutedEventArgs e) { }
