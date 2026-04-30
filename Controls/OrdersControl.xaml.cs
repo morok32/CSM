@@ -76,9 +76,10 @@ namespace ComputerServiceManager.Controls
             {
                 bool matchesDevice = order.ИмяУстройства?.ToLower().Contains(searchText) == true;
                 bool matchesClient = order.Клиент?.ФИО?.ToLower().Contains(searchText) == true;
+                bool matchesClientPhoneNumber = order.Клиент?.НомерТелефона?.ToLower().Contains(searchText) == true;
                 bool matchesTechnician = order.Пользователь?.ФИО?.ToLower().Contains(searchText) == true;
                 
-                if (!matchesDevice && !matchesClient && !matchesTechnician)
+                if (!matchesDevice && !matchesClient && !matchesTechnician && !matchesClientPhoneNumber)
                 {
                     return false;
                 }

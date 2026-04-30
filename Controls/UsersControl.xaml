@@ -49,21 +49,18 @@
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel>
                                     <TextBlock Text="По роли: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                    <TextBlock Text="Активность: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
+                                    <CheckBox x:Name="chkFilterActive" 
+                                              Content="Не активен"
+                                              Checked="chkFilterActive_Checked"
+                                              Unchecked="chkFilterActive_Checked"
+                                              Width="120" Height="20" HorizontalAlignment="Left">
+                                    </CheckBox>
                                 </StackPanel>
                                 <StackPanel>
                                     <ComboBox x:Name="cmbFilterRole" SelectedValuePath="idРоль" 
                                               DisplayMemberPath="Наименование" 
                                               SelectionChanged="cmbFilterRole_SelectionChanged" 
                                               Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                    <ComboBox x:Name="cmbFilterActive" 
-                                              SelectionChanged="cmbFilterActive_SelectionChanged" 
-                                              Width="120" Height="20" HorizontalAlignment="Left">
-                                        <ComboBoxItem Content="Все" Tag="-1" IsSelected="True"/>
-                                        <ComboBoxItem Content="Активен" Tag="1"/>
-                                        <ComboBoxItem Content="Не активен" Tag="0"/>
-                                    </ComboBox>
-
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>

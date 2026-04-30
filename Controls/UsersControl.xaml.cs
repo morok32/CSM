@@ -107,6 +107,12 @@ namespace ComputerServiceManager.Controls
                     return false;
             }
 
+            if (chkFilterActive.IsChecked == true)
+            {
+                if (row.Активность == true)
+                    return false;
+            }
+
             return true;
         }
 
@@ -301,6 +307,11 @@ namespace ComputerServiceManager.Controls
         private void buttonClean_Click(object sender, RoutedEventArgs e)
         {
             ClearForm();
+        }
+
+        private void chkFilterActive_Checked(object sender, RoutedEventArgs e)
+        {
+            OnFilterChanged();
         }
     }
 }

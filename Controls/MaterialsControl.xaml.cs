@@ -325,7 +325,6 @@ namespace ComputerServiceManager.Controls
 
             cmbxTypeMaterial.SelectedIndex = 0;
             txtModel.Text = "";
-            txtSerialNumber.Text = "";
             datePickerDateAdded.SelectedDate = DateTime.Now;
             txtQuantity.Text = "0";
             txtBasePrice.Text = "";
