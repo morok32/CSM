@@ -45,50 +45,37 @@ namespace ComputerServiceManager.Controls
         {
             var context = ComputerServiceManagerEntities.GetContext();
 
-            var combinedData = context.Склад
-                .AsNoTracking()
-                .Include(s => s.Материал.ТипМатериала)
-                .Select(s => new
-                {
-                    IdОстатка = s.idСклад,
-                    Количество = s.Количество ?? 0,
-                    НаименованиеМатериала = s.Материал.Наименование ?? "Не указано",
-                    БазоваяСтоимость = s.Материал.БазоваяСтоимость ?? 0,
-                    НаименованиеТипа = s.Материал.ТипМатериала.Наименование ?? "Не указан",
-                   //ДатаДобавления = s.Материал.ДатаДобавления,
-                    IdМатериала = s.Материал.idМатериал,
-                    РозничнаяЦена = s.Материал.РозничнаяЦена,
-                    Описание = s.Материал.Описание,
-                    //СерийныйНомер = s.Материал.СерийныйНомер
-                })
+            // Исправленный запрос с уникальными именами свойств
+            var stockData = context.Склад
+                .GroupJoin(
+                    context.СоставЗаказа_Материалы.Where(m => m.idСтатус == 8),
+                    s => s.idМатериал,
+                    m => m.idМатериал,
+                    (s, materials) => new
+                    {
+                        s.idСклад,
+                        s.Количество,
+                        s.Материал.idМатериал,
+                        MaterialName = s.Материал.Наименование,  // Явное имя для избежания конфликта
+                        s.Материал.БазоваяСтоимость,
+                        TypeName = s.Материал.ТипМатериала.Наименование,  // Явное имя для избежания конфликта
+                        s.Материал.РозничнаяЦена,
+                        s.Материал.Описание,
+                        Reserved = materials.Sum(m => m.Количество) ?? 0
+                    })
                 .ToList();
 
-            // Рассчитываем доступное количество для каждого материала
-            var resultWithAvailable = combinedData.Select(item =>
+            var resultWithAvailable = stockData.Select(item => new
             {
-                int materialId = item.IdМатериала;
-                decimal physicalQuantity = item.Количество;
-
-                // Считаем сумму всех активных резервов (idСтатус=8) по этому материалу
-                decimal totalReserved = context.СоставЗаказа_Материалы
-                    .Where(m => m.idМатериал == materialId && m.idСтатус == 8)
-                    .Sum(m => (decimal?)m.Количество) ?? 0;
-
-                // Доступно = физическое - зарезервировано
-                decimal available = physicalQuantity - totalReserved;
-
-                return new
-                {
-                    item.IdОстатка,
-                    item.Количество,
-                    item.НаименованиеМатериала,
-                    item.БазоваяСтоимость,
-                    item.НаименованиеТипа,
-                    item.IdМатериала,
-                    item.РозничнаяЦена,
-                    item.Описание,
-                    Доступно = available
-                };
+                IdОстатка = item.idСклад,
+                Количество = item.Количество ?? 0,
+                НаименованиеМатериала = item.MaterialName ?? "Не указано",  // Используем новое имя
+                БазоваяСтоимость = item.БазоваяСтоимость ?? 0,
+                НаименованиеТипа = item.TypeName ?? "Не указан",  // Используем новое имя
+                IdМатериала = item.idМатериал,
+                РозничнаяЦена = item.РозничнаяЦена,
+                Описание = item.Описание,
+                Доступно = item.Количество - item.Reserved
             }).ToList();
 
             _fullCombinedData = resultWithAvailable.Cast<object>().ToList();
@@ -166,12 +153,6 @@ namespace ComputerServiceManager.Controls
             OnFilterChanged();
         }
 
-        //private void btnResetDatePicker_Click(object sender, RoutedEventArgs e)
-        //{
-        //    dateFromDatePickerForMaterials.SelectedDate = null;
-        //    OnFilterChanged();
-        //}
-
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
             if (MaterialsDataGrid.SelectedItem == null)
@@ -186,15 +167,19 @@ namespace ComputerServiceManager.Controls
             using (var context = new ComputerServiceManagerEntities())
             {
                 _currentMaterial = context.Материал
-                    .Include("ТипМатериала")
-                    .Include("Склад")
                     .FirstOrDefault(m => m.idМатериал == materialId);
+
+                // Обнуляем navigation properties для предотвращения конфликтов
+                if (_currentMaterial != null)
+                {
+                    _currentMaterial.ТипМатериала = null;
+                    _currentMaterial.Склад.ToList().ForEach(s => s.Материал = null);
+                }
 
                 if (_currentMaterial != null)
                 {
                     cmbxTypeMaterial.SelectedValue = _currentMaterial.idТипМатериала;
                     txtModel.Text = _currentMaterial.Наименование;
-                    //txtSerialNumber.Text = _currentMaterial.СерийныйНомер;
                     datePickerDateAdded.SelectedDate = _currentMaterial.ДатаДобавления;
                     txtQuantity.Text = _currentMaterial.Склад.FirstOrDefault()?.Количество.ToString() ?? "0";
                     txtBasePrice.Text = _currentMaterial.БазоваяСтоимость?.ToString() ?? "";
@@ -227,9 +212,14 @@ namespace ComputerServiceManager.Controls
 
             try
             {
+                if (_currentMaterial == null)
+                {
+                    _currentMaterial = new Материал();
+                    _currentMaterial.Склад = new ObservableCollection<Склад>();
+                }
+
                 _currentMaterial.idТипМатериала = (int)cmbxTypeMaterial.SelectedValue;
                 _currentMaterial.Наименование = txtModel.Text;
-                //_currentMaterial.СерийныйНомер = txtSerialNumber.Text;
                 _currentMaterial.ДатаДобавления = datePickerDateAdded.SelectedDate ?? DateTime.Now;
                 _currentMaterial.Описание = txtDescription.Text;
 
@@ -248,12 +238,19 @@ namespace ComputerServiceManager.Controls
                 if (decimal.TryParse(txtQuantity.Text, out decimal quantity))
                     stock.Количество = quantity;
 
+                // Обнуляем navigation properties для предотвращения конфликтов
+                PrepareEntityForSave(_currentMaterial);
+
                 using (var context = new ComputerServiceManagerEntities())
                 {
                     if (_currentMaterial.idМатериал == 0)
+                    {
                         context.Материал.Add(_currentMaterial);
+                    }
                     else
+                    {
                         context.Entry(_currentMaterial).State = EntityState.Modified;
+                    }
 
                     context.SaveChanges();
                 }
@@ -265,6 +262,20 @@ namespace ComputerServiceManager.Controls
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка сохранения: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void PrepareEntityForSave(Материал material)
+        {
+            // Обнуляем navigation properties, чтобы избежать конфликтов при сохранении
+            material.ТипМатериала = null;
+
+            if (material.Склад != null)
+            {
+                foreach (var stock in material.Склад.ToList())
+                {
+                    stock.Материал = null;
+                }
             }
         }
 
@@ -284,13 +295,17 @@ namespace ComputerServiceManager.Controls
                 using (var context = new ComputerServiceManagerEntities())
                 {
                     var material = context.Материал
-                        .Include("Склад")
                         .FirstOrDefault(m => m.idМатериал == materialId);
 
                     if (material != null)
                     {
-                        context.Склад.RemoveRange(material.Склад);
+                        // Сначала удаляем записи из Склад
+                        var stocks = context.Склад.Where(s => s.idМатериал == materialId).ToList();
+                        context.Склад.RemoveRange(stocks);
+
+                        // Затем удаляем сам материал
                         context.Материал.Remove(material);
+
                         context.SaveChanges();
 
                         LoadData();
@@ -305,7 +320,7 @@ namespace ComputerServiceManager.Controls
         {
             _currentMaterial = null;
             _isEditing = false;
-            buttonSave.Visibility = Visibility.Collapsed;
+            buttonSave.IsEnabled = true;
             mainTabControl.SelectedItem = tabDataGridForMaterials;
 
             cmbxTypeMaterial.SelectedIndex = 0;

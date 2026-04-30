@@ -22,7 +22,7 @@ namespace ComputerServiceManager.Controls
     public partial class ServicesControl : UserControl
     {
         private ICollectionView _servicesView;
-        private List<Услуги> _fullServicesData;
+        private List<object> _fullCombinedData;
         private Услуги _currentService;
         private bool _isEditing;
 
@@ -36,27 +36,36 @@ namespace ComputerServiceManager.Controls
         {
             var context = ComputerServiceManagerEntities.GetContext();
 
-            _fullServicesData = context.Услуги
+            // Используем проекцию для согласованности с другими контролами
+            var servicesData = context.Услуги
                 .AsNoTracking()
+                .Select(s => new
+                {
+                    s.idУслуга,
+                    s.Наименование,
+                    s.Стоимость,
+                    s.Описание
+                })
                 .ToList();
 
-            _servicesView = CollectionViewSource.GetDefaultView(_fullServicesData);
+            _fullCombinedData = servicesData.Cast<object>().ToList();
+            _servicesView = CollectionViewSource.GetDefaultView(_fullCombinedData);
             _servicesView.Filter = FilterServices;
             ServicesDataGrid.ItemsSource = _servicesView;
         }
 
         private bool FilterServices(object item)
         {
-            var service = item as Услуги;
-            if (service == null) return false;
+            var row = item as dynamic;
+            if (row == null) return false;
 
             if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
                 var searchText = searchTextBox.Text.ToLower();
                 // Поиск по наименованию и описанию
-                bool matchesName = service.Наименование?.ToLower().Contains(searchText) == true;
-                bool matchesDescription = service.Описание?.ToLower().Contains(searchText) == true;
-                
+                bool matchesName = row.Наименование?.ToString().ToLower().Contains(searchText) == true;
+                bool matchesDescription = row.Описание?.ToString().ToLower().Contains(searchText) == true;
+
                 if (!matchesName && !matchesDescription)
                     return false;
             }
@@ -74,11 +83,6 @@ namespace ComputerServiceManager.Controls
             OnFilterChanged();
         }
 
-        private void cmbFilterTypeMaterial_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            OnFilterChanged();
-        }
-
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
             if (ServicesDataGrid.SelectedItem == null)
@@ -87,18 +91,36 @@ namespace ComputerServiceManager.Controls
                 return;
             }
 
-            _currentService = ServicesDataGrid.SelectedItem as Услуги;
+            var selectedRow = ServicesDataGrid.SelectedItem as dynamic;
+            int serviceId = (int)selectedRow.idУслуга;
 
-            if (_currentService != null)
+            using (var context = new ComputerServiceManagerEntities())
             {
-                txtServiceName.Text = _currentService.Наименование;
-                txtServicePrice.Text = _currentService.Стоимость?.ToString() ?? "";
-                txtDescription.Text = _currentService.Описание;
+                _currentService = context.Услуги
+                    .FirstOrDefault(s => s.idУслуга == serviceId);
 
-                _isEditing = true;
-                buttonSave.IsEnabled = true;
-                mainTabControl.SelectedItem = tabEditServices;
+                if (_currentService != null)
+                {
+                    // Обнуляем navigation properties, если они есть
+                    // В данном случае, предполагаем, что нет связанных сущностей,
+                    // но оставляем шаблон для будущих изменений
+                    PrepareEntityForSave(_currentService);
+
+                    txtServiceName.Text = _currentService.Наименование;
+                    txtServicePrice.Text = _currentService.Стоимость?.ToString() ?? "";
+                    txtDescription.Text = _currentService.Описание;
+
+                    _isEditing = true;
+                    buttonSave.IsEnabled = true;
+                    mainTabControl.SelectedItem = tabEditServices;
+                }
             }
+        }
+
+        private void PrepareEntityForSave(Услуги service)
+        {
+            // Обнуляем navigation properties для предотвращения конфликтов
+            // В текущей реализации, возможно, не требуется, но добавлено для единообразия
         }
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
@@ -118,6 +140,9 @@ namespace ComputerServiceManager.Controls
 
             try
             {
+                if (_currentService == null)
+                    _currentService = new Услуги();
+
                 _currentService.Наименование = txtServiceName.Text;
 
                 if (decimal.TryParse(txtServicePrice.Text, out decimal price))
@@ -125,12 +150,19 @@ namespace ComputerServiceManager.Controls
 
                 _currentService.Описание = txtDescription.Text;
 
+                // Обнуляем navigation properties перед сохранением
+                PrepareEntityForSave(_currentService);
+
                 using (var context = new ComputerServiceManagerEntities())
                 {
                     if (_currentService.idУслуга == 0)
+                    {
                         context.Услуги.Add(_currentService);
+                    }
                     else
+                    {
                         context.Entry(_currentService).State = EntityState.Modified;
+                    }
 
                     context.SaveChanges();
                 }
@@ -153,14 +185,15 @@ namespace ComputerServiceManager.Controls
                 return;
             }
 
-            var selectedService = ServicesDataGrid.SelectedItem as Услуги;
-            int serviceId = (int)selectedService.idУслуга;
+            var selectedRow = ServicesDataGrid.SelectedItem as dynamic;
+            int serviceId = (int)selectedRow.idУслуга;
 
             if (MessageBox.Show("Удалить услугу?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 using (var context = new ComputerServiceManagerEntities())
                 {
-                    var service = context.Услуги.FirstOrDefault(s => s.idУслуга == serviceId);
+                    var service = context.Услуги
+                        .FirstOrDefault(s => s.idУслуга == serviceId);
 
                     if (service != null)
                     {
@@ -179,7 +212,7 @@ namespace ComputerServiceManager.Controls
         {
             _currentService = null;
             _isEditing = false;
-            buttonSave.IsEnabled = false;
+            buttonSave.IsEnabled = true;
             mainTabControl.SelectedItem = tabDataGridForServices;
             txtServiceName.Text = "";
             txtServicePrice.Text = "";

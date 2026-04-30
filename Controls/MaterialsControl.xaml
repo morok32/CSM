@@ -87,12 +87,6 @@
                                     <TextBox x:Name="txtModel" Height="20" MinWidth="200"/>
                                 </StackPanel>
 
-                                <!-- Серийный номер -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                                    <Label Content="Серийный номер:" Width="120" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtSerialNumber" Height="20" MinWidth="200"/>
-                                </StackPanel>
-
                                 <!-- Дата добавления -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                                     <Label Content="Дата добавления:" Width="120" VerticalAlignment="Center"/>
