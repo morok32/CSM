@@ -61,7 +61,8 @@ namespace ComputerServiceManager.Controls
                 .ToList()
                 .Select(u => new
                 {
-                    u.IdПользователь,
+                    // Переименовано в idПользователь, чтобы binding в DataGrid работал
+                    idПользователь = u.IdПользователь,
                     ФИО = $"{u.Фамилия} {u.Имя} {u.Отчество}".Trim(),
                     u.Фамилия,
                     u.Имя,
@@ -87,7 +88,6 @@ namespace ComputerServiceManager.Controls
             var row = item as dynamic;
             if (row == null) return false;
 
-            // Поиск по всем полям
             if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
             {
                 var searchText = searchTextBox.Text.ToLower();
@@ -96,7 +96,7 @@ namespace ComputerServiceManager.Controls
                     !row.НомерТелефона.ToString().ToLower().Contains(searchText) &&
                     !row.НаименованиеРоль.ToString().ToLower().Contains(searchText) &&
                     !row.Логин.ToString().ToLower().Contains(searchText) &&
-                    !row.IdПользователь.ToString().Contains(searchText))
+                    !row.idПользователь.ToString().Contains(searchText))
                     return false;
             }
 
@@ -106,18 +106,6 @@ namespace ComputerServiceManager.Controls
                 if (selectedRole.idРоль != row.idРоль)
                     return false;
             }
-
-            //var selectedActiveItem = cmbFilterActive.SelectedItem as ComboBoxItem;
-            //if (selectedActiveItem != null)
-            //{
-            //    int activeTag = (int)(selectedActiveItem.Tag ?? -1);
-            //    if (activeTag != -1)
-            //    {
-            //        bool isActive = activeTag == 1;
-            //        if (row.Активность != isActive)
-            //            return false;
-            //    }
-            //}
 
             return true;
         }
@@ -151,16 +139,19 @@ namespace ComputerServiceManager.Controls
             }
 
             var selectedRow = UsersDataGrid.SelectedItem as dynamic;
-            int userId = (int)selectedRow.IdПользователь;
+            int userId = (int)selectedRow.idПользователь;   // изменено с IdПользователь
 
             using (var context = new ComputerServiceManagerEntities())
             {
+                // Загружаем БЕЗ Include, чтобы не тянуть объект Роль
                 _currentUser = context.Пользователь
-                    .Include("Роль")
                     .FirstOrDefault(u => u.idПользователь == userId);
 
                 if (_currentUser != null)
                 {
+                    // На всякий случай обнуляем навигационное свойство
+                    _currentUser.Роль = null;
+
                     cmbxRole.SelectedValue = _currentUser.idРоль;
                     txtLastName.Text = _currentUser.Фамилия;
                     txtFirstName.Text = _currentUser.Имя;
@@ -180,6 +171,9 @@ namespace ComputerServiceManager.Controls
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
+            if (_currentUser == null)
+                _currentUser = new Пользователь();
+
             StringBuilder errors = new StringBuilder();
 
             if (cmbxRole.SelectedItem == null || (int)cmbxRole.SelectedValue == -1)
@@ -214,12 +208,22 @@ namespace ComputerServiceManager.Controls
                     _currentUser.Пароль = txtPassword.Password;
                 _currentUser.Активность = chkActive.IsChecked ?? true;
 
+                // Гарантируем, что навигационное свойство не помешает сохранению
+                _currentUser.Роль = null;
+
                 using (var context = new ComputerServiceManagerEntities())
                 {
                     if (_currentUser.idПользователь == 0)
+                    {
+                        // Для новой записи не добавляем объект Роль
+                        _currentUser.Роль = null;
                         context.Пользователь.Add(_currentUser);
+                    }
                     else
+                    {
+                        // Присоединяем как изменённый, предварительно очистив свойство Роль
                         context.Entry(_currentUser).State = EntityState.Modified;
+                    }
 
                     context.SaveChanges();
                 }
@@ -243,7 +247,7 @@ namespace ComputerServiceManager.Controls
             }
 
             var selectedRow = UsersDataGrid.SelectedItem as dynamic;
-            int userId = (int)selectedRow.IdПользователь;
+            int userId = (int)selectedRow.idПользователь;   // изменено
 
             if (MessageBox.Show("Удалить пользователя?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -269,7 +273,6 @@ namespace ComputerServiceManager.Controls
         {
             _currentUser = null;
             _isEditing = false;
-            buttonSave.IsEnabled = false;
             mainTabControl.SelectedItem = tabDataGridForUsers;
 
             cmbxRole.SelectedValue = 0;
