@@ -56,7 +56,7 @@ namespace ComputerServiceManager.Windows
 
         private void LoadDictionaries()
         {
-            cmbxStatusInCard.ItemsSource = _dictContext.Статус.ToList();
+            cmbxStatusInCard.ItemsSource = _dictContext.Статус.Where(t => t.ТипСтатуса.idТипСтатуса == 1).ToList();
             cmbxStatusInCard.DisplayMemberPath = "Наименование";
             cmbxStatusInCard.SelectedValuePath = "idСтатус";
             cmbxStatusInCard.SelectedValue = _currentOrder.idСтатус;

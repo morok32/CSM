@@ -17,7 +17,6 @@ namespace ComputerServiceManager
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Пользователь()
         {
-            this.ЖурналДействий = new HashSet<ЖурналДействий>();
             this.Заказ = new HashSet<Заказ>();
         }
     
@@ -32,8 +31,6 @@ namespace ComputerServiceManager
         public string Логин { get; set; }
         public string Пароль { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ЖурналДействий> ЖурналДействий { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Заказ> Заказ { get; set; }
         public virtual Роль Роль { get; set; }

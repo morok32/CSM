@@ -26,14 +26,14 @@
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding idЗаказ}" Width="auto" MaxWidth="70"/>
-                <DataGridTextColumn Header="Устройство" Binding="{Binding ИмяУстройства}" Width="auto" MaxWidth="120"/>
-                <DataGridTextColumn Header="Клиент" Binding="{Binding Клиент.ФИО}" Width="auto" MaxWidth="150"/>
-                <DataGridTextColumn Header="Номер телефона" Binding="{Binding Клиент.НомерТелефона}" Width="auto" MaxWidth="150"/>
-                <DataGridTextColumn Header="Статус" Binding="{Binding Статус.Наименование}" Width="auto" MaxWidth="100"/>
-                <DataGridTextColumn Header="Техник" Binding="{Binding Пользователь.ФИО}" Width="auto" MaxWidth="150"/>
-                <DataGridTextColumn Header="Тип" Binding="{Binding ТипУстройства.Наименование}" Width="auto" MaxWidth="100"/>
-                <DataGridTextColumn Header="Дата" Binding="{Binding ДатаЗаказа, StringFormat=d}" Width="auto" MaxWidth="100"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding idЗаказ}" Width="auto" MaxWidth="70" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Устройство" Binding="{Binding ИмяУстройства}" Width="auto" MaxWidth="120" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Клиент" Binding="{Binding Клиент.ФИО}" Width="auto" MaxWidth="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Номер телефона" Binding="{Binding Клиент.НомерТелефона}" Width="auto" MaxWidth="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Статус.Наименование}" Width="auto" MaxWidth="100" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Техник" Binding="{Binding Пользователь.ФИО}" Width="auto" MaxWidth="150" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Тип" Binding="{Binding ТипУстройства.Наименование}" Width="auto" MaxWidth="100" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding ДатаЗаказа, StringFormat=d}" Width="auto" MaxWidth="100" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
 

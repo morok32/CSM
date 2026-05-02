@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:ComputerServiceManager"
         mc:Ignorable="d"
         Title="Редактирование заказа"
-        Width="650"
+        Width="800"
         Height="520"
         MinHeight="520"
-        MinWidth="650"
+        MinWidth="800"
         ResizeMode="CanResizeWithGrip"
         x:Name="ThisWindow">
 
@@ -143,7 +143,7 @@
             <TabItem Header="Состав заказа">
                 <StackPanel Margin="10">
                     <DockPanel Margin="0,0,0,10">
-                        <Label Content="Итоговая стоимость (из состава):" VerticalAlignment="Center"/>
+                        <Label Content="Итоговая стоимость:" VerticalAlignment="Center"/>
                         <TextBox x:Name="txtTotalCostFromStructure"
                      Width="120"
                      Height="25"
@@ -167,7 +167,7 @@
                                 </Style>
                             </ComboBox.Style>
                         </ComboBox>
-                        <Button x:Name="btnAddMaterial" Content="Материал +" Width="100" Height="25" Click="btnAddMaterial_Click">
+                        <Button x:Name="btnAddMaterial" Content="Материал" Width="100" Height="25" Click="btnAddMaterial_Click">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Style.Triggers>
@@ -191,7 +191,7 @@
                                 </Style>
                             </ComboBox.Style>
                         </ComboBox>
-                        <Button x:Name="btnAddService" Content="Услуга +" Width="100" Height="25" Click="btnAddService_Click">
+                        <Button x:Name="btnAddService" Content="Услуга" Width="100" Height="25" Click="btnAddService_Click">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Style.Triggers>

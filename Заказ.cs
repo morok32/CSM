@@ -17,7 +17,6 @@ namespace ComputerServiceManager
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Заказ()
         {
-            this.ЖурналДействий = new HashSet<ЖурналДействий>();
             this.СоставЗаказа_Материалы = new HashSet<СоставЗаказа_Материалы>();
             this.СоставЗаказа_Услуги = new HashSet<СоставЗаказа_Услуги>();
             this.Счет = new HashSet<Счет>();
@@ -33,8 +32,6 @@ namespace ComputerServiceManager
         public Nullable<System.DateTime> ДатаЗаказа { get; set; }
         public Nullable<int> idСтатус { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ЖурналДействий> ЖурналДействий { get; set; }
         public virtual Клиент Клиент { get; set; }
         public virtual Пользователь Пользователь { get; set; }
         public virtual Статус Статус { get; set; }

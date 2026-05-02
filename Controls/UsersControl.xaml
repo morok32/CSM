@@ -35,12 +35,12 @@
                               CanUserAddRows="False"
                               SelectionChanged="UsersDataGrid_SelectionChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding idПользователь}" Width="auto" MaxWidth="70"/>
-                            <DataGridTextColumn Header="ФИО" Binding="{Binding ФИО}" Width="*"/>
-                            <DataGridTextColumn Header="Роль" Binding="{Binding НаименованиеРоль}" Width="auto" MaxWidth="120"/>
-                            <DataGridTextColumn Header="Телефон" Binding="{Binding НомерТелефона}" Width="auto" MaxWidth="120"/>
-                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="auto" MaxWidth="150"/>
-                            <DataGridTextColumn Header="Активность" Binding="{Binding Активность}" Width="auto" MaxWidth="80"/>
+                            <DataGridTextColumn Header="ID" Binding="{Binding idПользователь}" Width="auto" MaxWidth="70" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="ФИО" Binding="{Binding ФИО}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Роль" Binding="{Binding НаименованиеРоль}" Width="auto" MaxWidth="120" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding НомерТелефона}" Width="auto" MaxWidth="120" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="auto" MaxWidth="150" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Активность" Binding="{Binding Активность}" Width="auto" MaxWidth="80" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

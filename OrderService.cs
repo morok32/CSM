@@ -306,10 +306,10 @@ namespace ComputerServiceManager.Services
                     }
 
                     // Удаляем журнал действий
-                    foreach (var log in order.ЖурналДействий.ToList())
-                    {
-                        context.ЖурналДействий.Remove(log);
-                    }
+                    //foreach (var log in order.ЖурналДействий.ToList())
+                    //{
+                    //    context.ЖурналДействий.Remove(log);
+                    //}
 
                     // Удаляем позиции материалов (связи)
                     foreach (var mat in order.СоставЗаказа_Материалы.ToList())

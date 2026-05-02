@@ -35,12 +35,12 @@
                               CanUserAddRows="False"
                               SelectionChanged="MaterialsDataGrid_SelectionChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding IdМатериала}" Width="auto" MaxWidth="70"/>
-                            <DataGridTextColumn Header="Наименование" Binding="{Binding НаименованиеМатериала}" Width="*"/>
-                            <DataGridTextColumn Header="Тип" Binding="{Binding НаименованиеТипа}" Width="auto" MaxWidth="120"/>
-                            <DataGridTextColumn Header="Цена" Binding="{Binding РозничнаяЦена, StringFormat=C}" Width="auto" MaxWidth="100"/>
-                            <DataGridTextColumn Header="Доступно" Binding="{Binding Доступно}" Width="auto" MaxWidth="80"/>
-                            <DataGridTextColumn Header="Количество" Binding="{Binding Количество}" Width="auto" MaxWidth="80"/>
+                            <DataGridTextColumn Header="ID" Binding="{Binding IdМатериала}" Width="auto" MaxWidth="70" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Наименование" Binding="{Binding НаименованиеМатериала}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Тип" Binding="{Binding НаименованиеТипа}" Width="auto" MaxWidth="120" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding РозничнаяЦена, StringFormat=C}" Width="auto" MaxWidth="100" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Доступно" Binding="{Binding Доступно}" Width="auto" MaxWidth="80" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Количество" Binding="{Binding Количество}" Width="auto" MaxWidth="80" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -57,8 +57,8 @@
                                               DisplayMemberPath="Наименование" 
                                               SelectionChanged="cmbFilterTypeMaterial_SelectionChanged" 
                                               Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-                                    <TextBox x:Name="txtMinPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5" TextChanged="txtMinPrice_TextChanged"/>
-                                    <TextBox x:Name="txtMaxPrice" Width="90" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5" TextChanged="txtMaxPrice_TextChanged"/>
+                                    <TextBox x:Name="txtMinPrice" Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5" TextChanged="txtMinPrice_TextChanged"/>
+                                    <TextBox x:Name="txtMaxPrice" Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5" TextChanged="txtMaxPrice_TextChanged"/>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
@@ -101,7 +101,7 @@
 
                                 <!-- Цена -->
                                 <StackPanel Orientation="Horizontal">
-                                    <Label Content="Базовая стоимость:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Закупочная стоимость:" Width="120" VerticalAlignment="Center"/>
                                     <TextBox x:Name="txtBasePrice" Height="20" MinWidth="200"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">

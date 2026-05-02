@@ -17,7 +17,6 @@ namespace ComputerServiceManager
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Материал()
         {
-            this.ЖурналДействий = new HashSet<ЖурналДействий>();
             this.СоставЗаказа_Материалы = new HashSet<СоставЗаказа_Материалы>();
             this.Склад = new HashSet<Склад>();
         }
@@ -32,8 +31,6 @@ namespace ComputerServiceManager
         public Nullable<System.DateTime> ДатаДобавления { get; set; }
     
         public virtual ЕдиницыИзмерения ЕдиницыИзмерения { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ЖурналДействий> ЖурналДействий { get; set; }
         public virtual ТипМатериала ТипМатериала { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<СоставЗаказа_Материалы> СоставЗаказа_Материалы { get; set; }

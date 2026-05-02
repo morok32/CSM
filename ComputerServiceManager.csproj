@@ -114,13 +114,7 @@
     <Compile Include="Windows\OrderEditWindow.xaml.cs">
       <DependentUpon>OrderEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\SelectMaterialsWindow.xaml.cs">
-      <DependentUpon>SelectMaterialsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ЕдиницыИзмерения.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ЖурналДействий.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Заказ.cs">
@@ -205,10 +199,6 @@
       <DependentUpon>loginWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Windows\OrderEditWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\SelectMaterialsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

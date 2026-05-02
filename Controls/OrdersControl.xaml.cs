@@ -43,8 +43,7 @@ namespace ComputerServiceManager.Controls
                 _ordersView.Filter = FilterOrders;
                 OrdersDataGrid.ItemsSource = _ordersView;
 
-                // --- Загрузка статусов ТОЛЬКО для заказов (idТипСтатуса = 1) ---
-                var statuses = context.Статус.ToList();
+                var statuses = context.Статус.Where(t => t.ТипСтатуса.idТипСтатуса == 1).ToList();
                 // Добавляем "Все"
                 statuses.Insert(0, new Статус { idСтатус = -1, Наименование = "Все" });
                 cmbFilterStatus.ItemsSource = statuses;

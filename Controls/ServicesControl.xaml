@@ -35,10 +35,10 @@
                               CanUserAddRows="False"
                               SelectionChanged="ServicesDataGrid_SelectionChanged">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding idУслуга}" Width="auto" MaxWidth="70"/>
-                            <DataGridTextColumn Header="Наименование" Binding="{Binding Наименование}" Width="*"/>
-                            <DataGridTextColumn Header="Цена" Binding="{Binding Стоимость, StringFormat=C}" Width="auto" MaxWidth="100"/>
-                            <DataGridTextColumn Header="Описание" Binding="{Binding Описание}" Width="auto" MaxWidth="200"/>
+                            <DataGridTextColumn Header="ID" Binding="{Binding idУслуга}" Width="auto" MaxWidth="70" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Наименование" Binding="{Binding Наименование}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Цена" Binding="{Binding Стоимость, StringFormat=C}" Width="auto" MaxWidth="100" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Описание" Binding="{Binding Описание}" Width="auto" MaxWidth="200" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

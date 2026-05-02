@@ -22,19 +22,6 @@
           <Property Name="idЕдиницаИзмерения" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Наименование" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <EntityType Name="ЖурналДействий">
-          <Key>
-            <PropertyRef Name="idДействия" />
-          </Key>
-          <Property Name="idДействия" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="idМатериал" Type="int" />
-          <Property Name="idЗаказ" Type="int" />
-          <Property Name="Количество" Type="decimal" Precision="18" Scale="3" />
-          <Property Name="ТипДвижения" Type="nvarchar" MaxLength="50" />
-          <Property Name="Комментарий" Type="nvarchar" MaxLength="500" />
-          <Property Name="idПользователь" Type="int" />
-          <Property Name="ДатаДвижения" Type="datetime2" Precision="7" />
-        </EntityType>
         <EntityType Name="Заказ">
           <Key>
             <PropertyRef Name="idЗаказ" />
@@ -191,42 +178,6 @@
           <Property Name="Стоимость" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Описание" Type="nvarchar(max)" />
         </EntityType>
-        <Association Name="FK_Движения_Заказ">
-          <End Role="Заказ" Type="Self.Заказ" Multiplicity="0..1" />
-          <End Role="ЖурналДействий" Type="Self.ЖурналДействий" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Заказ">
-              <PropertyRef Name="idЗаказ" />
-            </Principal>
-            <Dependent Role="ЖурналДействий">
-              <PropertyRef Name="idЗаказ" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Движения_Материал">
-          <End Role="Материал" Type="Self.Материал" Multiplicity="0..1" />
-          <End Role="ЖурналДействий" Type="Self.ЖурналДействий" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Материал">
-              <PropertyRef Name="idМатериал" />
-            </Principal>
-            <Dependent Role="ЖурналДействий">
-              <PropertyRef Name="idМатериал" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Движения_Пользователь">
-          <End Role="Пользователь" Type="Self.Пользователь" Multiplicity="0..1" />
-          <End Role="ЖурналДействий" Type="Self.ЖурналДействий" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Пользователь">
-              <PropertyRef Name="idПользователь" />
-            </Principal>
-            <Dependent Role="ЖурналДействий">
-              <PropertyRef Name="idПользователь" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Заказ_Клиент">
           <End Role="Клиент" Type="Self.Клиент" Multiplicity="0..1" />
           <End Role="Заказ" Type="Self.Заказ" Multiplicity="*" />
@@ -383,7 +334,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_СкладскиеОстатки_Материал">
+        <Association Name="FK_Склад_Материал">
           <End Role="Материал" Type="Self.Материал" Multiplicity="0..1" />
           <End Role="Склад" Type="Self.Склад" Multiplicity="*" />
           <ReferentialConstraint>
@@ -465,7 +416,6 @@
         <EntityContainer Name="Хранилище ComputerServiceManagerModelContainer">
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ЕдиницыИзмерения" EntityType="Self.ЕдиницыИзмерения" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ЖурналДействий" EntityType="Self.ЖурналДействий" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Заказ" EntityType="Self.Заказ" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Клиент" EntityType="Self.Клиент" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Материал" EntityType="Self.Материал" Schema="dbo" store:Type="Tables" />
@@ -482,18 +432,6 @@
           <EntitySet Name="ТипСтатуса" EntityType="Self.ТипСтатуса" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ТипУстройства" EntityType="Self.ТипУстройства" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Услуги" EntityType="Self.Услуги" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_Движения_Заказ" Association="Self.FK_Движения_Заказ">
-            <End Role="Заказ" EntitySet="Заказ" />
-            <End Role="ЖурналДействий" EntitySet="ЖурналДействий" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Движения_Материал" Association="Self.FK_Движения_Материал">
-            <End Role="Материал" EntitySet="Материал" />
-            <End Role="ЖурналДействий" EntitySet="ЖурналДействий" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Движения_Пользователь" Association="Self.FK_Движения_Пользователь">
-            <End Role="Пользователь" EntitySet="Пользователь" />
-            <End Role="ЖурналДействий" EntitySet="ЖурналДействий" />
-          </AssociationSet>
           <AssociationSet Name="FK_Заказ_Клиент" Association="Self.FK_Заказ_Клиент">
             <End Role="Клиент" EntitySet="Клиент" />
             <End Role="Заказ" EntitySet="Заказ" />
@@ -546,7 +484,7 @@
             <End Role="Услуги" EntitySet="Услуги" />
             <End Role="СоставЗаказа_Услуги" EntitySet="СоставЗаказа_Услуги" />
           </AssociationSet>
-          <AssociationSet Name="FK_СкладскиеОстатки_Материал" Association="Self.FK_СкладскиеОстатки_Материал">
+          <AssociationSet Name="FK_Склад_Материал" Association="Self.FK_Склад_Материал">
             <End Role="Материал" EntitySet="Материал" />
             <End Role="Склад" EntitySet="Склад" />
           </AssociationSet>
@@ -586,22 +524,6 @@
           <Property Name="Наименование" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Материал" Relationship="Self.FK_Материал_ЕдиницыИзмерения" FromRole="ЕдиницыИзмерения" ToRole="Материал" />
         </EntityType>
-        <EntityType Name="ЖурналДействий">
-          <Key>
-            <PropertyRef Name="idДействия" />
-          </Key>
-          <Property Name="idДействия" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="idМатериал" Type="Int32" />
-          <Property Name="idЗаказ" Type="Int32" />
-          <Property Name="Количество" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="ТипДвижения" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Комментарий" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="idПользователь" Type="Int32" />
-          <Property Name="ДатаДвижения" Type="DateTime" Precision="7" />
-          <NavigationProperty Name="Заказ" Relationship="Self.FK_Движения_Заказ" FromRole="ЖурналДействий" ToRole="Заказ" />
-          <NavigationProperty Name="Материал" Relationship="Self.FK_Движения_Материал" FromRole="ЖурналДействий" ToRole="Материал" />
-          <NavigationProperty Name="Пользователь" Relationship="Self.FK_Движения_Пользователь" FromRole="ЖурналДействий" ToRole="Пользователь" />
-        </EntityType>
         <EntityType Name="Заказ">
           <Key>
             <PropertyRef Name="idЗаказ" />
@@ -615,7 +537,6 @@
           <Property Name="idПользователь" Type="Int32" />
           <Property Name="ДатаЗаказа" Type="DateTime" Precision="7" />
           <Property Name="idСтатус" Type="Int32" />
-          <NavigationProperty Name="ЖурналДействий" Relationship="Self.FK_Движения_Заказ" FromRole="Заказ" ToRole="ЖурналДействий" />
           <NavigationProperty Name="Клиент" Relationship="Self.FK_Заказ_Клиент" FromRole="Заказ" ToRole="Клиент" />
           <NavigationProperty Name="Пользователь" Relationship="Self.FK_Заказ_Пользователь" FromRole="Заказ" ToRole="Пользователь" />
           <NavigationProperty Name="Статус" Relationship="Self.FK_Заказ_Статус1" FromRole="Заказ" ToRole="Статус" />
@@ -649,10 +570,9 @@
           <Property Name="idЕдиницыИзмерения" Type="Int32" />
           <Property Name="ДатаДобавления" Type="DateTime" Precision="0" />
           <NavigationProperty Name="ЕдиницыИзмерения" Relationship="Self.FK_Материал_ЕдиницыИзмерения" FromRole="Материал" ToRole="ЕдиницыИзмерения" />
-          <NavigationProperty Name="ЖурналДействий" Relationship="Self.FK_Движения_Материал" FromRole="Материал" ToRole="ЖурналДействий" />
           <NavigationProperty Name="ТипМатериала" Relationship="Self.FK_Материал_ТипМатериала" FromRole="Материал" ToRole="ТипМатериала" />
           <NavigationProperty Name="СоставЗаказа_Материалы" Relationship="Self.FK_СЗМ_Материал" FromRole="Материал" ToRole="СоставЗаказа_Материалы" />
-          <NavigationProperty Name="Склад" Relationship="Self.FK_СкладскиеОстатки_Материал" FromRole="Материал" ToRole="Склад" />
+          <NavigationProperty Name="Склад" Relationship="Self.FK_Склад_Материал" FromRole="Материал" ToRole="Склад" />
         </EntityType>
         <EntityType Name="Платеж">
           <Key>
@@ -680,7 +600,6 @@
           <Property Name="Активность" Type="Boolean" />
           <Property Name="Логин" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Пароль" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="ЖурналДействий" Relationship="Self.FK_Движения_Пользователь" FromRole="Пользователь" ToRole="ЖурналДействий" />
           <NavigationProperty Name="Заказ" Relationship="Self.FK_Заказ_Пользователь" FromRole="Пользователь" ToRole="Заказ" />
           <NavigationProperty Name="Роль" Relationship="Self.FK_Пользователь_Роль" FromRole="Пользователь" ToRole="Роль" />
         </EntityType>
@@ -699,7 +618,7 @@
           <Property Name="idСклад" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="idМатериал" Type="Int32" />
           <Property Name="Количество" Type="Decimal" Precision="18" Scale="2" />
-          <NavigationProperty Name="Материал" Relationship="Self.FK_СкладскиеОстатки_Материал" FromRole="Склад" ToRole="Материал" />
+          <NavigationProperty Name="Материал" Relationship="Self.FK_Склад_Материал" FromRole="Склад" ToRole="Материал" />
         </EntityType>
         <EntityType Name="СоставЗаказа_Материалы">
           <Key>
@@ -806,42 +725,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Движения_Заказ">
-          <End Role="Заказ" Type="Self.Заказ" Multiplicity="0..1" />
-          <End Role="ЖурналДействий" Type="Self.ЖурналДействий" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Заказ">
-              <PropertyRef Name="idЗаказ" />
-            </Principal>
-            <Dependent Role="ЖурналДействий">
-              <PropertyRef Name="idЗаказ" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Движения_Материал">
-          <End Role="Материал" Type="Self.Материал" Multiplicity="0..1" />
-          <End Role="ЖурналДействий" Type="Self.ЖурналДействий" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Материал">
-              <PropertyRef Name="idМатериал" />
-            </Principal>
-            <Dependent Role="ЖурналДействий">
-              <PropertyRef Name="idМатериал" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Движения_Пользователь">
-          <End Role="Пользователь" Type="Self.Пользователь" Multiplicity="0..1" />
-          <End Role="ЖурналДействий" Type="Self.ЖурналДействий" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Пользователь">
-              <PropertyRef Name="idПользователь" />
-            </Principal>
-            <Dependent Role="ЖурналДействий">
-              <PropertyRef Name="idПользователь" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Заказ_Клиент">
           <End Role="Клиент" Type="Self.Клиент" Multiplicity="0..1" />
           <End Role="Заказ" Type="Self.Заказ" Multiplicity="*" />
@@ -950,7 +833,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_СкладскиеОстатки_Материал">
+        <Association Name="FK_Склад_Материал">
           <End Role="Материал" Type="Self.Материал" Multiplicity="0..1" />
           <End Role="Склад" Type="Self.Склад" Multiplicity="*" />
           <ReferentialConstraint>
@@ -1037,7 +920,6 @@
         <EntityContainer Name="ComputerServiceManagerEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="ЕдиницыИзмерения" EntityType="Self.ЕдиницыИзмерения" />
-          <EntitySet Name="ЖурналДействий" EntityType="Self.ЖурналДействий" />
           <EntitySet Name="Заказ" EntityType="Self.Заказ" />
           <EntitySet Name="Клиент" EntityType="Self.Клиент" />
           <EntitySet Name="Материал" EntityType="Self.Материал" />
@@ -1057,18 +939,6 @@
           <AssociationSet Name="FK_Материал_ЕдиницыИзмерения" Association="Self.FK_Материал_ЕдиницыИзмерения">
             <End Role="ЕдиницыИзмерения" EntitySet="ЕдиницыИзмерения" />
             <End Role="Материал" EntitySet="Материал" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Движения_Заказ" Association="Self.FK_Движения_Заказ">
-            <End Role="Заказ" EntitySet="Заказ" />
-            <End Role="ЖурналДействий" EntitySet="ЖурналДействий" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Движения_Материал" Association="Self.FK_Движения_Материал">
-            <End Role="Материал" EntitySet="Материал" />
-            <End Role="ЖурналДействий" EntitySet="ЖурналДействий" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Движения_Пользователь" Association="Self.FK_Движения_Пользователь">
-            <End Role="Пользователь" EntitySet="Пользователь" />
-            <End Role="ЖурналДействий" EntitySet="ЖурналДействий" />
           </AssociationSet>
           <AssociationSet Name="FK_Заказ_Клиент" Association="Self.FK_Заказ_Клиент">
             <End Role="Клиент" EntitySet="Клиент" />
@@ -1106,7 +976,7 @@
             <End Role="Материал" EntitySet="Материал" />
             <End Role="СоставЗаказа_Материалы" EntitySet="СоставЗаказа_Материалы" />
           </AssociationSet>
-          <AssociationSet Name="FK_СкладскиеОстатки_Материал" Association="Self.FK_СкладскиеОстатки_Материал">
+          <AssociationSet Name="FK_Склад_Материал" Association="Self.FK_Склад_Материал">
             <End Role="Материал" EntitySet="Материал" />
             <End Role="Склад" EntitySet="Склад" />
           </AssociationSet>
@@ -1198,20 +1068,6 @@
               <MappingFragment StoreEntitySet="ЕдиницыИзмерения">
                 <ScalarProperty Name="idЕдиницаИзмерения" ColumnName="idЕдиницаИзмерения" />
                 <ScalarProperty Name="Наименование" ColumnName="Наименование" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ЖурналДействий">
-            <EntityTypeMapping TypeName="ComputerServiceManagerModel.ЖурналДействий">
-              <MappingFragment StoreEntitySet="ЖурналДействий">
-                <ScalarProperty Name="idДействия" ColumnName="idДействия" />
-                <ScalarProperty Name="idМатериал" ColumnName="idМатериал" />
-                <ScalarProperty Name="idЗаказ" ColumnName="idЗаказ" />
-                <ScalarProperty Name="Количество" ColumnName="Количество" />
-                <ScalarProperty Name="ТипДвижения" ColumnName="ТипДвижения" />
-                <ScalarProperty Name="Комментарий" ColumnName="Комментарий" />
-                <ScalarProperty Name="idПользователь" ColumnName="idПользователь" />
-                <ScalarProperty Name="ДатаДвижения" ColumnName="ДатаДвижения" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

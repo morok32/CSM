@@ -26,15 +26,14 @@ namespace ComputerServiceManager
         {
             throw new UnintentionalCodeFirstException();
         }
+
         public static ComputerServiceManagerEntities GetContext()
         {
             return new ComputerServiceManagerEntities();
         }
 
-
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<ЕдиницыИзмерения> ЕдиницыИзмерения { get; set; }
-        public virtual DbSet<ЖурналДействий> ЖурналДействий { get; set; }
         public virtual DbSet<Заказ> Заказ { get; set; }
         public virtual DbSet<Клиент> Клиент { get; set; }
         public virtual DbSet<Материал> Материал { get; set; }
