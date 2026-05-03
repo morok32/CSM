@@ -268,7 +268,6 @@ namespace ComputerServiceManager.Services
                     // Загружаем все связанные данные перед удалением
                     context.Configuration.LazyLoadingEnabled = true;
                     order = context.Заказ
-                        .Include("ЖурналДействий")
                         .Include("Счет")
                         .Include("Счет.Платеж")
                         .Include("СоставЗаказа_Материалы")
@@ -304,12 +303,6 @@ namespace ComputerServiceManager.Services
                     {
                         context.Счет.Remove(invoice);
                     }
-
-                    // Удаляем журнал действий
-                    //foreach (var log in order.ЖурналДействий.ToList())
-                    //{
-                    //    context.ЖурналДействий.Remove(log);
-                    //}
 
                     // Удаляем позиции материалов (связи)
                     foreach (var mat in order.СоставЗаказа_Материалы.ToList())

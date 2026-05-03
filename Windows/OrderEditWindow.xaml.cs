@@ -457,8 +457,8 @@ namespace ComputerServiceManager.Windows
                 }
 
                 MessageBox.Show("Заказ сохранен успешно!");
-                //DialogResult = true;
-                //Close();
+                DialogResult = true;
+                Close();
             }
             catch (Exception ex)
             {
