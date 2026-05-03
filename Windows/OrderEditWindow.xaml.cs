@@ -126,7 +126,7 @@ namespace ComputerServiceManager.Windows
                 // Проверка: нельзя удалить списанный материал (idСтатус == 9)
                 if (item.idСтатус == 9)
                 {
-                    MessageBox.Show("Нельзя удалить списанный материал. Сначала необходимо выполнить возврат на склад.", 
+                    MessageBox.Show("Нельзя удалить списанный материал. Сначала необходимо выполнить возврат на склад.",
                         "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -206,7 +206,7 @@ namespace ComputerServiceManager.Windows
                         int currentOrderStatus = _currentOrder.idСтатус ?? 1;
                         if (currentOrderStatus != 6)
                         {
-                            MessageBox.Show("Списание разрешено только у заказов которые имеют статус 'Выдан клиенту'", 
+                            MessageBox.Show("Списание разрешено только у заказов которые имеют статус 'Выдан клиенту'",
                                 "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
                         }
@@ -251,14 +251,14 @@ namespace ComputerServiceManager.Windows
                                     if (stock.Количество >= entity.Количество)
                                     {
                                         stock.Количество -= entity.Количество;
-                                        
+
                                         // Обновляем статус на "Списан" (id=9)
                                         entity.idСтатус = 9;
                                         context.SaveChanges();
 
                                         // Обновляем статус в UI
                                         item.idСтатус = 9;
-                                        
+
                                         dgMaterials.Items.Refresh();
                                         UpdateTotalAmount();
 
@@ -439,10 +439,19 @@ namespace ComputerServiceManager.Windows
             _currentOrder.idТипУстройства = (int?)cmbxTypeDevice.SelectedValue ?? _currentOrder.idТипУстройства;
 
             // Сохранение техника
-            if (cmbxTechnician.SelectedValue != null)
+            if (_isNewOrder && AuthService.IsTechnician && AuthService.CurrentUserId.HasValue)
+            {
+                // Для нового заказа техника всегда подставляем текущего авторизованного техника
+                _currentOrder.idПользователь = AuthService.CurrentUserId.Value;
+            }
+            else if (cmbxTechnician.SelectedValue != null)
+            {
                 _currentOrder.idПользователь = (int)cmbxTechnician.SelectedValue;
+            }
             else
+            {
                 _currentOrder.idПользователь = null;
+            }
 
             // Принудительно обновляем текстовые поля (на случай если binding не сработал)
             _currentOrder.ИмяУстройства = txtModel.Text;
