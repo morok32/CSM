@@ -439,10 +439,19 @@ namespace ComputerServiceManager.Windows
             _currentOrder.idТипУстройства = (int?)cmbxTypeDevice.SelectedValue ?? _currentOrder.idТипУстройства;
 
             // Сохранение техника
-            if (cmbxTechnician.SelectedValue != null)
+            if (_isNewOrder && AuthService.IsTechnician && AuthService.CurrentUserId.HasValue)
+            {
+                // Для нового заказа техника всегда подставляем текущего авторизованного техника
+                _currentOrder.idПользователь = AuthService.CurrentUserId.Value;
+            }
+            else if (cmbxTechnician.SelectedValue != null)
+            {
                 _currentOrder.idПользователь = (int)cmbxTechnician.SelectedValue;
+            }
             else
+            {
                 _currentOrder.idПользователь = null;
+            }
 
             // Принудительно обновляем текстовые поля (на случай если binding не сработал)
             _currentOrder.ИмяУстройства = txtModel.Text;
