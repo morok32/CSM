@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:ComputerServiceManager.Controls"
         Title="Сервисный Центр" Height="550" Width="800" MinHeight="550" MinWidth="800">
     <Grid>
-        <TabControl Margin="10" SelectionChanged="TabControl_SelectionChanged">
+        <TabControl x:Name="MainTabControl" Margin="10" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Заказы"  VerticalAlignment="Top">
                 <!-- Просто вставляем наш контрол -->
                 <controls:OrdersControl x:Name="OrdersControl"/>

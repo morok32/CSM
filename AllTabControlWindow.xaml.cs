@@ -47,16 +47,14 @@ namespace ComputerServiceManager
             if (isTechnician)
             {
                 // Делает вкладку "Услуги" неактивной
-                var servicesTab = FindName("ServicesTab") as TabItem ?? 
-                                  ((TabControl)this.Content).Items.OfType<TabItem>()
-                                      .FirstOrDefault(t => t.Header?.ToString() == "Услуги");
+                var servicesTab = MainTabControl.Items.OfType<TabItem>()
+                    .FirstOrDefault(t => t.Header?.ToString() == "Услуги");
                 if (servicesTab != null)
                     servicesTab.IsEnabled = false;
 
                 // Делает вкладку "Пользователи" неактивной
-                var usersTab = FindName("UsersTab") as TabItem ??
-                               ((TabControl)this.Content).Items.OfType<TabItem>()
-                                   .FirstOrDefault(t => t.Header?.ToString() == "Пользователи");
+                var usersTab = MainTabControl.Items.OfType<TabItem>()
+                    .FirstOrDefault(t => t.Header?.ToString() == "Пользователи");
                 if (usersTab != null)
                     usersTab.IsEnabled = false;
 
