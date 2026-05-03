@@ -17,12 +17,23 @@ namespace ComputerServiceManager.Controls
         private ObservableCollection<Заказ> _fullOrderList;
         private ICollectionView _ordersView;
         private readonly OrderService _orderService;
+        private int? _currentUserId;  // ID текущего пользователя для фильтрации
 
         public OrdersControl()
         {
             InitializeComponent();
             _orderService = new OrderService();
             LoadData();
+        }
+
+        /// <summary>
+        /// Применяет фильтр по текущему пользователю
+        /// </summary>
+        /// <param name="userId">ID пользователя</param>
+        public void ApplyUserFilter(int? userId)
+        {
+            _currentUserId = userId;
+            _ordersView?.Refresh();
         }
 
         public void LoadData()
@@ -68,6 +79,16 @@ namespace ComputerServiceManager.Controls
         {
             if (!(item is Заказ order))
                 return false;
+
+            // Фильтр по текущему пользователю (если установлен)
+            if (_currentUserId.HasValue && AuthService.IsAuthenticated && !AuthService.IsAdmin)
+            {
+                // Если пользователь не администратор, показываем только его заказы
+                if (order.idПользователь != _currentUserId.Value)
+                {
+                    return false;
+                }
+            }
 
             // Фильтр по тексту (поиск по технику, клиенту, устройству)
             string searchText = searchTextBox.Text.Trim().ToLower();

@@ -137,6 +137,7 @@
     <Compile Include="Роль.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="AuthService.cs" />
     <Compile Include="Склад.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
