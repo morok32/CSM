@@ -5,16 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComputerServiceManager"
         mc:Ignorable="d"
-        Title="Авторизация" Height="auto" Width="auto">
-    <StackPanel>
-        <DockPanel  Margin="5,0,5,0">
-            <Label Content="Логин" Width="55" Height="25"/>
-            <TextBox Width="100" Height="20" HorizontalAlignment="Left"/>
+        Title="Авторизация" Height="auto" Width="auto" WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="15">
+        <DockPanel  Margin="5,0,5,10">
+            <Label Content="Логин" Width="80" Height="25"/>
+            <TextBox x:Name="txtLogin" Width="150" Height="23" HorizontalAlignment="Left"/>
         </DockPanel>
-        <DockPanel Margin="5,0,5,0">
-            <Label Content="Пароль" Width="55" Height="25"/>
-            <TextBox Width="100" Height="20" HorizontalAlignment="Left"/>
+        <DockPanel Margin="5,0,5,10">
+            <Label Content="Пароль" Width="80" Height="25"/>
+            <PasswordBox x:Name="txtPassword" Width="150" Height="23" HorizontalAlignment="Left"/>
         </DockPanel>
-        <Button Content="Войти" Width="100" Height="20" Margin="5"/>
+        <Button x:Name="btnLogin" Content="Войти" Width="100" Height="25" Margin="5" Click="btnLogin_Click"/>
+        <TextBlock x:Name="txtError" Foreground="Red" Margin="5,10,5,5" TextWrapping="Wrap"/>
     </StackPanel>
 </Window>

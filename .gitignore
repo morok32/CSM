@@ -1,6 +1,46 @@
-# Visual Studio
-.vs/
+```
+# Build artifacts
+*.obj
+*.exe
+*.dll
+*.pdb
+*.userprefs
+*.cache
+*.compiled
+*.suo
 *.user
+*.aps
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.log
+*.nupkg
+*.snk
+*.sn
+packages/
 bin/
 obj/
+Debug/
+Release/
+x64/
+x86/
+# Dependencies
 packages/
+# Environment
+.env
+.env.local
+.env.*
+# Editors
+.vs/
+*.userprefs
+*.cache
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+desktop.ini
+# Logs
+*.log
+```

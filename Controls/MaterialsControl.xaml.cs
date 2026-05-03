@@ -25,12 +25,37 @@ namespace ComputerServiceManager.Controls
         private List<object> _fullCombinedData;
         private Материал _currentMaterial;
         private bool _isEditing;
+        private bool _isTechnicianMode;  // Флаг режима техника
 
         public MaterialsControl()
         {
             InitializeComponent();
             LoadData();
             LoadMaterialTypes();
+        }
+
+        /// <summary>
+        /// Устанавливает режим техника (ограничивает доступ к редактированию)
+        /// </summary>
+        /// <param name="isTechnician">true если пользователь - техник</param>
+        public void SetTechnicianMode(bool isTechnician)
+        {
+            _isTechnicianMode = isTechnician;
+
+            if (_isTechnicianMode)
+            {
+                // Блокируем вкладку "Редактирование"
+                if (tabEditMaterials != null)
+                {
+                    tabEditMaterials.IsEnabled = false;
+                }
+
+                // Блокируем кнопки: Открыть, Сохранить, Удалить, Очистить
+                if (buttonEdit != null) buttonEdit.IsEnabled = false;
+                if (buttonSave != null) buttonSave.IsEnabled = false;
+                if (buttonDelete != null) buttonDelete.IsEnabled = false;
+                if (buttonClean != null) buttonClean.IsEnabled = false;
+            }
         }
 
         private void LoadMaterialTypes()
@@ -155,6 +180,12 @@ namespace ComputerServiceManager.Controls
 
         private void buttonEdit_Click(object sender, RoutedEventArgs e)
         {
+            if (_isTechnicianMode)
+            {
+                MessageBox.Show("У вас нет прав на редактирование материалов", "Доступ запрещён", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (MaterialsDataGrid.SelectedItem == null)
             {
                 MessageBox.Show("Выберите материал для редактирования");
@@ -195,6 +226,12 @@ namespace ComputerServiceManager.Controls
 
         private void buttonSave_Click(object sender, RoutedEventArgs e)
         {
+            if (_isTechnicianMode)
+            {
+                MessageBox.Show("У вас нет прав на сохранение материалов", "Доступ запрещён", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             StringBuilder errors = new StringBuilder();
 
             if (cmbxTypeMaterial.SelectedItem == null || (int)cmbxTypeMaterial.SelectedValue == -1)
@@ -281,6 +318,12 @@ namespace ComputerServiceManager.Controls
 
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
+            if (_isTechnicianMode)
+            {
+                MessageBox.Show("У вас нет прав на удаление материалов", "Доступ запрещён", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             if (MaterialsDataGrid.SelectedItem == null)
             {
                 MessageBox.Show("Выберите материал для удаления");
@@ -346,6 +389,11 @@ namespace ComputerServiceManager.Controls
 
         private void buttonClean_Click(object sender, RoutedEventArgs e)
         {
+            if (_isTechnicianMode)
+            {
+                MessageBox.Show("У вас нет прав на очистку формы", "Доступ запрещён", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             ClearForm();
         }
     }
