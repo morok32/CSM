@@ -54,10 +54,10 @@ namespace ComputerServiceManager
                 
                 // После закрытия главного окна - показываем окно входа снова
                 // Это позволит пользователю войти под другой учетной записью
-                this.Show();
-                txtLogin.Text = "";
-                txtPassword.Password = "";
-                txtLogin.Focus();
+                //this.Show();
+                //txtLogin.Text = "";
+                //txtPassword.Password = "";
+                //txtLogin.Focus();
             }
             else
             {
