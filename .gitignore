@@ -1,46 +1,73 @@
 ```
-# Build artifacts
-*.obj
-*.exe
-*.dll
-*.pdb
-*.userprefs
-*.cache
-*.compiled
-*.suo
-*.user
-*.aps
-*.tlb
-*.tli
-*.tlh
-*.tmp
-*.log
-*.nupkg
-*.snk
-*.sn
-packages/
+# Build outputs
 bin/
 obj/
-Debug/
-Release/
-x64/
-x86/
-# Dependencies
-packages/
+*.dll
+*.exe
+*.pdb
+*.userprefs
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE files
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
 # Environment
 .env
 .env.local
-.env.*
-# Editors
-.vs/
-*.userprefs
-*.cache
-# OS generated files
-.DS_Store
-Thumbs.db
-ehthumbs.db
-Icon?
-desktop.ini
-# Logs
+*.env.*
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+*.coverage
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
 *.log
+.gitattributes
+.project
+.pydevproject
+.vscode/
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/node_modules/
+/dist/
+/build/
+/public/
+.next/
+.nuxt/
 ```
