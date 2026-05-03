@@ -1,7 +1,1 @@
-# Visual Studio
-.vs/
-*.user
-bin/
-obj/
-packages/
-
+Nothing should be ignored based on the provided file changes. The only modified file is 'Windows/OrderEditWindow.xaml.cs', which appears to be a source code file (.xaml.cs). Since there are no build artifacts, dependencies, temporary files, or other ignorable items in the changes, the .gitignore should remain empty.

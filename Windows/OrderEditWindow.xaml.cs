@@ -75,8 +75,17 @@ namespace ComputerServiceManager.Windows
             cmbxTypeDevice.SelectedValuePath = "idТипУстройства";
             cmbxTypeDevice.SelectedValue = _currentOrder.idТипУстройства;
 
-            cmbxTechnician.ItemsSource = _dictContext.Пользователь.Where(p => p.Активность == true).ToList();
+            var techniciansList = _dictContext.Пользователь.Where(p => p.Активность == true).ToList();
+            cmbxTechnician.ItemsSource = techniciansList;
             cmbxTechnician.SelectedValuePath = "idПользователь";
+
+            // Если это новый заказ и пользователь авторизован как техник,
+            // автоматически выбираем его и блокируем ComboBox
+            if (_isNewOrder && AuthService.IsTechnician && AuthService.CurrentUserId.HasValue)
+            {
+                cmbxTechnician.SelectedValue = AuthService.CurrentUserId.Value;
+                cmbxTechnician.IsEnabled = false;
+            }
 
             var materialsList = _dictContext.Материал.ToList();
             cmbMaterialSelect.ItemsSource = materialsList;
