@@ -72,13 +72,15 @@
                         <!-- Блок основной информации -->
                         <GroupBox Header="Основная информация" Margin="0,0,0,5">
                             <StackPanel Margin="5">
-                                <!-- Тип материала -->
+                                <!-- Тип материала и процент наценки -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <Label Content="Тип:" Width="120" VerticalAlignment="Center"/>
                                     <ComboBox x:Name="cmbxTypeMaterial"
                                               SelectedValuePath="idТипМатериала"
                                               DisplayMemberPath="Наименование"
                                               MinHeight="24" MinWidth="200"/>
+                                    <Label Content="Наценка (%):" Width="80" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                    <TextBox x:Name="txtMarkupPercent" Height="20" MinWidth="80" Text="0" TextChanged="txtMarkupPercent_TextChanged"/>
                                 </StackPanel>
 
                                 <!-- Наименование -->
@@ -102,11 +104,11 @@
                                 <!-- Цена -->
                                 <StackPanel Orientation="Horizontal">
                                     <Label Content="Закупочная стоимость:" Width="120" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtBasePrice" Height="20" MinWidth="200"/>
+                                    <TextBox x:Name="txtBasePrice" Height="20" MinWidth="200" TextChanged="txtBasePrice_TextChanged"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <Label Content="Розничная стоимость:" Width="120" VerticalAlignment="Center"/>
-                                    <TextBox x:Name="txtRetailPrice" Height="20" MinWidth="200"/>
+                                    <TextBox x:Name="txtRetailPrice" Height="20" MinWidth="200" IsReadOnly="True"/>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>

@@ -214,6 +214,18 @@ namespace ComputerServiceManager.Controls
                     datePickerDateAdded.SelectedDate = _currentMaterial.ДатаДобавления;
                     txtQuantity.Text = _currentMaterial.Склад.FirstOrDefault()?.Количество.ToString() ?? "0";
                     txtBasePrice.Text = _currentMaterial.БазоваяСтоимость?.ToString() ?? "";
+                    
+                    // Расчет процента наценки из существующих данных
+                    if (_currentMaterial.БазоваяСтоимость.HasValue && _currentMaterial.РозничнаяЦена.HasValue && _currentMaterial.БазоваяСтоимость.Value > 0)
+                    {
+                        decimal markupPercent = ((_currentMaterial.РозничнаяЦена.Value - _currentMaterial.БазоваяСтоимость.Value) / _currentMaterial.БазоваяСтоимость.Value) * 100;
+                        txtMarkupPercent.Text = markupPercent.ToString("F2");
+                    }
+                    else
+                    {
+                        txtMarkupPercent.Text = "0";
+                    }
+                    
                     txtRetailPrice.Text = _currentMaterial.РозничнаяЦена?.ToString() ?? "";
                     txtDescription.Text = _currentMaterial.Описание;
 
@@ -371,6 +383,7 @@ namespace ComputerServiceManager.Controls
             datePickerDateAdded.SelectedDate = DateTime.Now;
             txtQuantity.Text = "0";
             txtBasePrice.Text = "";
+            txtMarkupPercent.Text = "0";
             txtRetailPrice.Text = "";
             txtDescription.Text = "";
         }
@@ -395,6 +408,33 @@ namespace ComputerServiceManager.Controls
                 return;
             }
             ClearForm();
+        }
+
+        /// <summary>
+        /// Расчет розничной цены на основе закупочной стоимости и процента наценки
+        /// </summary>
+        private void CalculateRetailPrice()
+        {
+            if (decimal.TryParse(txtBasePrice.Text, out decimal basePrice) &&
+                decimal.TryParse(txtMarkupPercent.Text, out decimal markupPercent))
+            {
+                decimal retailPrice = basePrice * (1 + markupPercent / 100);
+                txtRetailPrice.Text = retailPrice.ToString("F2");
+            }
+            else
+            {
+                txtRetailPrice.Text = string.Empty;
+            }
+        }
+
+        private void txtMarkupPercent_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CalculateRetailPrice();
+        }
+
+        private void txtBasePrice_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CalculateRetailPrice();
         }
     }
 }
