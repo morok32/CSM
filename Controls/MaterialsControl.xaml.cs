@@ -220,7 +220,6 @@ namespace ComputerServiceManager.Controls
                     txtRetailPrice.Text = CalculateRetailPriceFromBaseAndMarkup(basePrice);
 
                     // Устанавливаем значение НДС в поле редактирования
-                    txtVatPercent.Text = _globalVatPercent.ToString();
                     txtDescription.Text = _currentMaterial.Описание;
 
                     _isEditing = true;
@@ -378,7 +377,6 @@ namespace ComputerServiceManager.Controls
             txtQuantity.Text = "0";
             txtBasePrice.Text = "";
             txtMarkupPercent.Text = "0";
-            txtVatPercent.Text = _globalVatPercent.ToString(); // Сбрасываем НДС к глобальному значению
             txtRetailPrice.Text = "";
             txtDescription.Text = "";
         }
@@ -443,18 +441,6 @@ namespace ComputerServiceManager.Controls
         private void txtBasePrice_TextChanged(object sender, TextChangedEventArgs e)
         {
             CalculateRetailPrice();
-        }
-
-        /// <summary>
-        /// Обработчик изменения процента НДС
-        /// </summary>
-        private void txtVatPercent_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (decimal.TryParse(txtVatPercent.Text, out decimal vatPercent))
-            {
-                _globalVatPercent = vatPercent;
-                CalculateRetailPrice(); // Пересчитываем цену при изменении НДС
-            }
         }
     }
 }

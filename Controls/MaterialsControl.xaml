@@ -81,8 +81,6 @@
                                               MinHeight="24" MinWidth="200"/>
                                     <Label Content="Наценка (%):" Width="80" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                     <TextBox x:Name="txtMarkupPercent" Height="20" MinWidth="80" Text="0" TextChanged="txtMarkupPercent_TextChanged"/>
-                                    <Label Content="НДС (%):" Width="60" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                                    <TextBox x:Name="txtVatPercent" Height="20" MinWidth="60" Text="5" TextChanged="txtVatPercent_TextChanged"/>
                                 </StackPanel>
 
                                 <!-- Наименование -->
