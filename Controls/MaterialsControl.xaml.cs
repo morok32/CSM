@@ -26,6 +26,7 @@ namespace ComputerServiceManager.Controls
         private Материал _currentMaterial;
         private bool _isEditing;
         private bool _isTechnicianMode;  // Флаг режима техника
+        private decimal _globalVatPercent = 5m; // Глобальный процент НДС
 
         public MaterialsControl()
         {
@@ -218,14 +219,18 @@ namespace ComputerServiceManager.Controls
                     // Расчет процента наценки из существующих данных
                     if (_currentMaterial.БазоваяСтоимость.HasValue && _currentMaterial.РозничнаяЦена.HasValue && _currentMaterial.БазоваяСтоимость.Value > 0)
                     {
-                        decimal markupPercent = ((_currentMaterial.РозничнаяЦена.Value - _currentMaterial.БазоваяСтоимость.Value) / _currentMaterial.БазоваяСтоимость.Value) * 100;
+                        // Сначала вычитаем НДС из розничной цены, затем рассчитываем наценку
+                        decimal priceWithoutVat = _currentMaterial.РозничнаяЦена.Value / (1 + _globalVatPercent / 100);
+                        decimal markupPercent = ((priceWithoutVat - _currentMaterial.БазоваяСтоимость.Value) / _currentMaterial.БазоваяСтоимость.Value) * 100;
                         txtMarkupPercent.Text = markupPercent.ToString("F2");
                     }
                     else
                     {
                         txtMarkupPercent.Text = "0";
                     }
-                    
+
+                    // Устанавливаем значение НДС в поле редактирования
+                    txtVatPercent.Text = _globalVatPercent.ToString();
                     txtRetailPrice.Text = _currentMaterial.РозничнаяЦена?.ToString() ?? "";
                     txtDescription.Text = _currentMaterial.Описание;
 
@@ -384,6 +389,7 @@ namespace ComputerServiceManager.Controls
             txtQuantity.Text = "0";
             txtBasePrice.Text = "";
             txtMarkupPercent.Text = "0";
+            txtVatPercent.Text = _globalVatPercent.ToString(); // Сбрасываем НДС к глобальному значению
             txtRetailPrice.Text = "";
             txtDescription.Text = "";
         }
@@ -411,14 +417,16 @@ namespace ComputerServiceManager.Controls
         }
 
         /// <summary>
-        /// Расчет розничной цены на основе закупочной стоимости и процента наценки
+        /// Расчет розничной цены на основе закупочной стоимости и процента наценки с учетом НДС
         /// </summary>
         private void CalculateRetailPrice()
         {
             if (decimal.TryParse(txtBasePrice.Text, out decimal basePrice) &&
                 decimal.TryParse(txtMarkupPercent.Text, out decimal markupPercent))
             {
-                decimal retailPrice = basePrice * (1 + markupPercent / 100);
+                // Сначала рассчитываем цену с наценкой, затем добавляем НДС
+                decimal priceWithMarkup = basePrice * (1 + markupPercent / 100);
+                decimal retailPrice = priceWithMarkup * (1 + _globalVatPercent / 100);
                 txtRetailPrice.Text = retailPrice.ToString("F2");
             }
             else
@@ -435,6 +443,18 @@ namespace ComputerServiceManager.Controls
         private void txtBasePrice_TextChanged(object sender, TextChangedEventArgs e)
         {
             CalculateRetailPrice();
+        }
+
+        /// <summary>
+        /// Обработчик изменения процента НДС
+        /// </summary>
+        private void txtVatPercent_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (decimal.TryParse(txtVatPercent.Text, out decimal vatPercent))
+            {
+                _globalVatPercent = vatPercent;
+                CalculateRetailPrice(); // Пересчитываем цену при изменении НДС
+            }
         }
     }
 }
