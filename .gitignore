@@ -1,1 +1,1 @@
-Nothing needs to be added to the .gitignore file based on the provided file changes, as they only include source code files (.xaml and .cs) which should not be ignored.
+Nothing should be ignored based on the provided file changes. The only modified file is 'Controls/MaterialsControl.xaml.cs', which appears to be a source code file and should not be added to .gitignore. Since there are no build artifacts, dependencies, or temporary files in the changes, no additional ignore rules are needed.
