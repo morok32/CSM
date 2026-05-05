@@ -217,9 +217,8 @@ namespace ComputerServiceManager.Controls
                     txtQuantity.Text = _currentMaterial.Склад.FirstOrDefault()?.Количество.ToString() ?? "0";
                     txtBasePrice.Text = _currentMaterial.БазоваяСтоимость?.ToString() ?? "";
                     txtMarkupPercent.Text = _globalMarkupPercent.ToString("F2");
-                    txtRetailPrice.Text = CalculateRetailPriceFromBaseAndMarkup(basePrice);
+                    txtRetailPrice.Text = CalculateRetailPriceFromBaseAndMarkup(_currentMaterial.БазоваяСтоимость ?? 0);
 
-                    // Устанавливаем значение НДС в поле редактирования
                     txtDescription.Text = _currentMaterial.Описание;
 
                     _isEditing = true;
@@ -415,6 +414,9 @@ namespace ComputerServiceManager.Controls
 
         private void CalculateRetailPrice()
         {
+            if (txtBasePrice == null || txtMarkupPercent == null || txtRetailPrice == null)
+                return;
+
             if (decimal.TryParse(txtBasePrice.Text, out decimal basePrice) &&
                 decimal.TryParse(txtMarkupPercent.Text, out decimal markupPercent))
             {
