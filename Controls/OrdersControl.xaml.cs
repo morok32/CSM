@@ -23,6 +23,12 @@ namespace ComputerServiceManager.Controls
         {
             InitializeComponent();
             _orderService = new OrderService();
+
+            // Если пользователь техник, отключаем кнопку удаления
+            if (AuthService.IsAuthenticated && AuthService.IsTechnician)
+            {
+                buttonDelete.IsEnabled = false;
+            }
             LoadData();
         }
 
