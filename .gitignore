@@ -1,71 +1,7 @@
-# Compiled and build artifacts
-*.exe
-*.dll
-*.pdb
+# Visual Studio
+.vs/
+*.user
 bin/
 obj/
-Debug/
-Release/
-
-# Dependencies
 packages/
-node_modules/
-venv/
-.venv/
 
-# Logs and temp files
-*.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-*.userprefs
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Build outputs
-dist/
-build/
-target/
-.out
-.a
-.so
-.class
-
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-.coverage
-coverage/
-htmlcov/
-
-# Java specific
-*.class
-*.jar
-*.war
-.gradle/
-!gradle-wrapper.properties
-
-# C# specific
-*.user
-*.sln.docstates
-_ReSharper*/
-[Tt]emp/
-[Bb]in/
-[Oo]bj/
-[Ll]og[s]/
-
-# Original rules preserved
-*.log
