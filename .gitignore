@@ -1,22 +1,36 @@
 # Compiled and build artifacts
-*.exe
+*.pyc
+__pycache__/
+*.o
+*.obj
 *.dll
-*.pdb
-bin/
-obj/
-Debug/
-Release/
+*.so
+*.exe
+*.class
+*.out
+*.a
 
 # Dependencies
-packages/
-node_modules/
-venv/
 .venv/
+venv/
+node_modules/
+.mypy_cache/
+.pytest_cache/
+.npm/
+.yarn/
+bower_components/
+target/
+.gradle/
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
+*.swo
+*.bak
+*.~
+.DS_Store
+Thumbs.db
 
 # Environment
 .env
@@ -26,46 +40,46 @@ venv/
 # Editors
 .vscode/
 .idea/
-*.userprefs
-
-# OS generated files
-.DS_Store
-Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
 
 # Build outputs
 dist/
 build/
-target/
-.out
-.a
-.so
-.class
-
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-.coverage
 coverage/
 htmlcov/
+*.coverage
+.coverage.*
+!.gitignore
 
-# Java specific
-*.class
-*.jar
-*.war
-.gradle/
-!gradle-wrapper.properties
+# OS generated files
+*.swp
+*.swo
+*~
 
-# C# specific
-*.user
-*.sln.docstates
-_ReSharper*/
-[Tt]emp/
-[Bb]in/
-[Oo]bj/
-[Ll]og[s]/
-
-# Original rules preserved
-*.log
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
