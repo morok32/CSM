@@ -4,6 +4,8 @@ using ComputerServiceManager.Windows;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -515,6 +517,33 @@ namespace ComputerServiceManager.Windows
                 {
                     MessageBox.Show($"Ошибка удаления: {ex.Message}");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Печать чека/накладной в формате HTML
+        /// </summary>
+        private void btnPrintInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            if (_isNewOrder || _currentOrder.idЗаказ <= 0)
+            {
+                MessageBox.Show("Сначала сохраните заказ.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                using (var docService = new DocumentService())
+                {
+                    string path = docService.GenerateInvoiceHtml(_currentOrder);
+                    System.Diagnostics.Process.Start(path);
+                }
+                
+                MessageBox.Show($"Чек сформирован и открыт в браузере.\n\nДля сохранения в PDF нажмите Ctrl+P и выберите 'Сохранить как PDF'.", "Печать", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при формировании чека: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

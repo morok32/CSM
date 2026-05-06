@@ -83,6 +83,7 @@
                                         <Button x:Name="btnSave" Content="Сохранить" Width="80" Height="25" Margin="0,0,5,0" Padding="5,0" Click="btnSave_Click"/>
                                         <Button x:Name="btnCancel" Content="Отмена" Width="80" Height="25" Padding="5,0" Click="btnCancel_Click"/>
                                         <Button x:Name="btnDeleteOrder" Content="Удалить" Width="80" Height="25" HorizontalAlignment="Left" Margin="5,0,0,0" Click="btnDeleteOrder_Click"/>
+                                        <Button x:Name="btnPrintInvoice" Content="Печать" Width="80" Height="25" HorizontalAlignment="Left" Margin="5,0,0,0" Click="btnPrintInvoice_Click"/>
                                     </StackPanel>
                                 </StackPanel>
                             </GroupBox>
