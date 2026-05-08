@@ -16,6 +16,5 @@
             <PasswordBox x:Name="txtPassword" Width="150" Height="23" HorizontalAlignment="Left"/>
         </DockPanel>
         <Button x:Name="btnLogin" Content="Войти" Width="100" Height="25" Margin="5" Click="btnLogin_Click"/>
-        <TextBlock x:Name="txtError" Foreground="Red" Margin="5,10,5,5" TextWrapping="Wrap"/>
     </StackPanel>
 </Window>

@@ -31,13 +31,13 @@ namespace ComputerServiceManager
 
             if (string.IsNullOrEmpty(login))
             {
-                txtError.Text = "Введите логин";
+                MessageBox.Show("Введите логин");
                 return;
             }
 
             if (string.IsNullOrEmpty(password))
             {
-                txtError.Text = "Введите пароль";
+                MessageBox.Show("Введите пароль");
                 return;
             }
 
@@ -45,7 +45,6 @@ namespace ComputerServiceManager
 
             if (user != null)
             {
-                txtError.Text = "";
                 // Открываем главное окно с учетом прав доступа
                 var mainViewWindow = new AllTabControlWindow();
                 mainViewWindow.ApplyRoleBasedAccess();
@@ -54,7 +53,7 @@ namespace ComputerServiceManager
             }
             else
             {
-                txtError.Text = "Неверный логин или пароль";
+                MessageBox.Show("Неверный логин или пароль");
             }
         }
     }
