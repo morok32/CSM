@@ -1,7 +1,9 @@
-﻿using ComputerServiceManager.Services;
-using System;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
+using System.Linq;
+using ComputerServiceManager.Models;
 
 namespace ComputerServiceManager.Services
 {
@@ -95,15 +97,12 @@ namespace ComputerServiceManager.Services
                 </tr>";
             }
 
-            // Расшифровка суммы прописью
-            string totalInWords = NumberToWordsRussian(grandTotal);
-
             string html = $@"
 <!DOCTYPE html>
 <html lang='ru'>
 <head>
     <meta charset='UTF-8'>
-    <title>Заказ-наряд №{order.idЗаказ}</title>
+    <title>Накладная для Заказа №{order.idЗаказ}</title>
     <style>
         body {{ font-family: Arial, sans-serif; padding: 20px; font-size: 14px; }}
         .header {{ text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }}
@@ -127,7 +126,7 @@ namespace ComputerServiceManager.Services
 </head>
 <body>
     <div class='header'>
-        <h1>Заказ-наряд №{order.idЗаказ}</h1>
+        <h1>Накладная для Заказа №{order.idЗаказ}</h1>
         <p>от {orderDate}</p>
     </div>
 
@@ -135,10 +134,11 @@ namespace ComputerServiceManager.Services
         <table>
             <tr>
                 <td style='width: 50%;'><strong>Клиент:</strong> {clientName}</td>
-                <td><strong>Статус:</strong> {statusName}</td>
             </tr>
             <tr>
                 <td><strong>Устройство:</strong> {deviceModel} {(!string.IsNullOrEmpty(serialNumber) ? $"(S/N: {serialNumber})" : "")}</td>
+            </tr>
+            <tr>
                 <td><strong>Техник:</strong> {technicianName}</td>
             </tr>
         </table>
@@ -177,21 +177,10 @@ namespace ComputerServiceManager.Services
     <div class='total'>
         Итого к оплате: {grandTotal:F2} ₽
     </div>
-    <div class='total-words'>
-        ({totalInWords})
-    </div>
-
-    <div class='footer'>
-        <p>Неисправность: {malfunction}</p>
-    </div>
 
     <div class='signature'>
         <p>Подпись мастера: _________________ / {technicianName}</p>
         <p style='margin-top: 15px;'>Подпись клиента: _________________ / {clientName}</p>
-    </div>
-
-    <div class='no-print' style='margin-top: 20px; text-align: center;'>
-        <button onclick='window.print()' style='padding: 10px 20px; font-size: 14px; cursor: pointer;'>🖨️ Печать / Сохранить в PDF</button>
     </div>
 </body>
 </html>";
@@ -201,105 +190,9 @@ namespace ComputerServiceManager.Services
             return path;
         }
 
-        /// <summary>
-        /// Переводит число в сумму прописью на русском языке
-        /// </summary>
-        private string NumberToWordsRussian(decimal amount)
-        {
-            int rubles = (int)Math.Floor(amount);
-            int kopecks = (int)Math.Round((amount - rubles) * 100);
-
-            string rublesText = ConvertNumberToWords(rubles);
-            string kopecksText = kopecks.ToString("D2");
-
-            return $"{rublesText} рублей {kopecksText} копеек";
-        }
-
-        /// <summary>
-        /// Преобразует число в слова (рубли)
-        /// </summary>
-        private string ConvertNumberToWords(int number)
-        {
-            if (number == 0) return "ноль";
-
-            string[] ones = { "", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять" };
-            string[] teens = { "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать" };
-            string[] tens = { "", "", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто" };
-            string[] hundreds = { "", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот" };
-
-            if (number < 10) return ones[number];
-            if (number < 20) return teens[number - 10];
-            if (number < 100)
-            {
-                int t = number / 10;
-                int o = number % 10;
-                return o == 0 ? tens[t] : tens[t] + " " + ones[o];
-            }
-            if (number < 1000)
-            {
-                int h = number / 100;
-                int rest = number % 100;
-                string restText = rest > 0 ? " " + ConvertNumberToWords(rest) : "";
-                return hundreds[h] + restText;
-            }
-            if (number < 1000000)
-            {
-                int th = number / 1000;
-                int rest = number % 1000;
-                string thText;
-                if (th == 1) thText = "одна тысяча";
-                else if (th >= 2 && th <= 4) thText = "две тысячи";
-                else thText = ConvertNumberToWords(th) + " тысяч";
-                string restText = rest > 0 ? " " + ConvertNumberToWords(rest) : "";
-                return (thText + " " + restText).Trim();
-            }
-            if (number < 1000000000)
-            {
-                int mil = number / 1000000;
-                int rest = number % 1000000;
-                string milText;
-                if (mil == 1) milText = "один миллион";
-                else if (mil >= 2 && mil <= 4) milText = "два миллиона";
-                else milText = ConvertNumberToWords(mil) + " миллионов";
-                string restText = rest > 0 ? " " + ConvertNumberToWords(rest) : "";
-                return (milText + " " + restText).Trim();
-            }
-
-            return number.ToString();
-        }
-
         public void Dispose()
         {
             _context?.Dispose();
         }
-    }
-
-    /// <summary>
-    /// Вспомогательный класс для отображения материалов в составе заказа
-    /// </summary>
-    public class OrderMaterialItem
-    {
-        public int idПозиции { get; set; }
-        public int idМатериала { get; set; }
-        public string Наименование { get; set; }
-        public int Количество { get; set; }
-        public decimal ЦенаЗаЕдиницу { get; set; }
-        public decimal СтоимостьПозиции { get; set; }
-        public int idСтатус { get; set; }
-        public bool IsNew { get; set; }
-    }
-
-    /// <summary>
-    /// Вспомогательный класс для отображения услуг в составе заказа
-    /// </summary>
-    public class OrderServiceItem
-    {
-        public int idПозиции { get; set; }
-        public int idУслуги { get; set; }
-        public string Наименование { get; set; }
-        public int Количество { get; set; }
-        public decimal ЦенаЗаЕдиницу { get; set; }
-        public decimal СтоимостьПозиции { get; set; }
-        public bool IsNew { get; set; }
     }
 }

@@ -539,7 +539,7 @@ namespace ComputerServiceManager.Windows
                     System.Diagnostics.Process.Start(path);
                 }
                 
-                MessageBox.Show($"Чек сформирован и открыт в браузере.\n\nДля сохранения в PDF нажмите Ctrl+P и выберите 'Сохранить как PDF'.", "Печать", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Чек сформирован и открыт в браузере.", "Печать", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
