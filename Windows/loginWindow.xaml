@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ComputerServiceManager"
         mc:Ignorable="d"
-        Title="Авторизация" Height="160" Width="280" WindowStartupLocation="CenterScreen">
+        Title="Авторизация" Height="180" Width="300" WindowStartupLocation="CenterScreen">
     <StackPanel Margin="15">
         <DockPanel  Margin="5,0,5,10">
             <Label Content="Логин" Width="80" Height="25"/>
