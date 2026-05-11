@@ -257,68 +257,73 @@ namespace ComputerServiceManager.Services
 
         public void DeleteOrder(int orderId)
         {
+            DeleteOrders(new List<int> { orderId });
+        }
+
+        public void DeleteOrders(List<int> orderIds)
+        {
             using (var context = new ComputerServiceManagerEntities())
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var order = context.Заказ.Find(orderId);
-                    if (order == null) return;
-
-                    // Загружаем все связанные данные перед удалением
-                    context.Configuration.LazyLoadingEnabled = true;
-                    order = context.Заказ
-                        .Include("Счет")
-                        .Include("Счет.Платеж")
-                        .Include("СоставЗаказа_Материалы")
-                        .Include("СоставЗаказа_Услуги")
-                        .FirstOrDefault(z => z.idЗаказ == orderId);
-
-                    if (order == null) return;
-
-                    foreach (var mat in order.СоставЗаказа_Материалы.ToList())
+                    foreach (var orderId in orderIds)
                     {
-                        // Если материал зарезервирован (idСтатус == 8), просто удаляем запись
-                        // Физическое количество не меняется, т.к. резерв еще не был списан
-                        if (mat.idСтатус == 8)
+                        // Загружаем все связанные данные перед удалением
+                        var order = context.Заказ
+                            .Include("Счет")
+                            .Include("Счет.Платеж")
+                            .Include("СоставЗаказа_Материалы")
+                            .Include("СоставЗаказа_Услуги")
+                            .FirstOrDefault(z => z.idЗаказ == orderId);
+
+                        if (order == null) continue;
+
+                        foreach (var mat in order.СоставЗаказа_Материалы.ToList())
                         {
-                            // Просто удаляем запись - резерв снимается автоматически
+                            // Если материал зарезервирован (idСтатус == 8), просто удаляем запись
+                            // Физическое количество не меняется, т.к. резерв еще не был списан
+                            if (mat.idСтатус == 8)
+                            {
+                                // Просто удаляем запись - резерв снимается автоматически
+                            }
                         }
-                    }
-                    context.SaveChanges();
+                        context.SaveChanges();
 
-                    // Удаляем платежи по всем счетам
-                    foreach (var invoice in order.Счет.ToList())
-                    {
-                        foreach (var payment in invoice.Платеж.ToList())
+                        // Удаляем платежи по всем счетам
+                        foreach (var invoice in order.Счет.ToList())
                         {
-                            context.Платеж.Remove(payment);
+                            foreach (var payment in invoice.Платеж.ToList())
+                            {
+                                context.Платеж.Remove(payment);
+                            }
                         }
+
+                        // Удаляем счета
+                        foreach (var invoice in order.Счет.ToList())
+                        {
+                            context.Счет.Remove(invoice);
+                        }
+
+                        // Удаляем позиции материалов (связи)
+                        foreach (var mat in order.СоставЗаказа_Материалы.ToList())
+                        {
+                            context.СоставЗаказа_Материалы.Remove(mat);
+                        }
+
+                        // Удаляем позиции услуг (связи)
+                        foreach (var serv in order.СоставЗаказа_Услуги.ToList())
+                        {
+                            context.СоставЗаказа_Услуги.Remove(serv);
+                        }
+
+                        // Сохраняем изменения перед удалением заказа
+                        context.SaveChanges();
+
+                        // Теперь удаляем сам заказ
+                        context.Заказ.Remove(order);
                     }
-
-                    // Удаляем счета
-                    foreach (var invoice in order.Счет.ToList())
-                    {
-                        context.Счет.Remove(invoice);
-                    }
-
-                    // Удаляем позиции материалов (связи)
-                    foreach (var mat in order.СоставЗаказа_Материалы.ToList())
-                    {
-                        context.СоставЗаказа_Материалы.Remove(mat);
-                    }
-
-                    // Удаляем позиции услуг (связи)
-                    foreach (var serv in order.СоставЗаказа_Услуги.ToList())
-                    {
-                        context.СоставЗаказа_Услуги.Remove(serv);
-                    }
-
-                    // Сохраняем изменения перед удалением заказа
-                    context.SaveChanges();
-
-                    // Теперь удаляем сам заказ
-                    context.Заказ.Remove(order);
+                    
                     context.SaveChanges();
                     transaction.Commit();
                 }

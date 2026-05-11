@@ -168,28 +168,32 @@ namespace ComputerServiceManager.Controls
 
         private void buttonDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (OrdersDataGrid.SelectedItem is Заказ orderFromView)
-            {
-                int orderId = orderFromView.idЗаказ;
+            var selectedOrders = OrdersDataGrid.SelectedItems.Cast<Заказ>().ToList();
 
-                if (MessageBox.Show("Вы уверены, что хотите удалить этот заказ?", "Подтверждение",
-                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    try
-                    {
-                        _orderService.DeleteOrder(orderId);
-                        MessageBox.Show("Заказ успешно удалён.");
-                        LoadData();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-            else
+            if (selectedOrders.Count == 0)
             {
-                MessageBox.Show("Выберите заказ для удаления.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Выберите заказ(ы) для удаления.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string confirmationMessage = selectedOrders.Count == 1
+                ? "Вы уверены, что хотите удалить этот заказ?"
+                : $"Вы уверены, что хотите удалить выбранные заказы ({selectedOrders.Count} шт.)?";
+
+            if (MessageBox.Show(confirmationMessage, "Подтверждение",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    var orderIds = selectedOrders.Select(o => o.idЗаказ).ToList();
+                    _orderService.DeleteOrders(orderIds);
+                    MessageBox.Show($"Заказ(ы) успешно удалён(ы).");
+                    LoadData();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
