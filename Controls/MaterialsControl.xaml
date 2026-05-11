@@ -53,7 +53,7 @@
                                     <TextBlock Text="Цена до: " Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
                                 </StackPanel>
                                 <StackPanel>
-                                    <ComboBox x:Name="cmbFilterTypeMaterial" SelectedValue="idТипМатериала" SelectedValuePath="idТипМатериала" 
+                                    <ComboBox x:Name="cmbFilterTypeMaterial" SelectedValuePath="idТипМатериала" 
                                               DisplayMemberPath="Наименование" 
                                               SelectionChanged="cmbFilterTypeMaterial_SelectionChanged" 
                                               Width="120" Height="20" HorizontalAlignment="Left" Margin="0,0,0,5"/>
