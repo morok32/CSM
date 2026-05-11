@@ -66,11 +66,18 @@ namespace ComputerServiceManager.Controls
             var materialTypes = context.ТипМатериала.ToList();
             materialTypes.Insert(0, new ТипМатериала { idТипМатериала = -1, Наименование = "Выберите тип" });
             cmbxTypeMaterial.ItemsSource = materialTypes;
+            cmbxTypeMaterial.SelectedIndex = 0;
         }
 
         public void LoadData()
         {
             var context = ComputerServiceManagerEntities.GetContext();
+
+            // Загрузка типов материалов для фильтра
+            var materialTypesForFilter = context.ТипМатериала.ToList();
+            materialTypesForFilter.Insert(0, new ТипМатериала { idТипМатериала = -1, Наименование = "Все" });
+            cmbFilterTypeMaterial.ItemsSource = materialTypesForFilter;
+            cmbFilterTypeMaterial.SelectedIndex = 0;
 
             // Исправленный запрос с уникальными именами свойств
             var stockData = context.Склад
