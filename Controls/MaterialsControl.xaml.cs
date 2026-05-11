@@ -64,8 +64,18 @@ namespace ComputerServiceManager.Controls
         {
             var context = ComputerServiceManagerEntities.GetContext();
             var materialTypes = context.ТипМатериала.ToList();
-            materialTypes.Insert(0, new ТипМатериала { idТипМатериала = -1, Наименование = "Выберите тип" });
-            cmbxTypeMaterial.ItemsSource = materialTypes;
+            
+            // Заполняем ComboBox для редактирования
+            var editMaterialTypes = new List<ТипМатериала>(materialTypes);
+            editMaterialTypes.Insert(0, new ТипМатериала { idТипМатериала = -1, Наименование = "Выберите тип" });
+            cmbxTypeMaterial.ItemsSource = editMaterialTypes;
+            cmbxTypeMaterial.SelectedValue = -1;
+
+            // Заполняем ComboBox для фильтра
+            var filterMaterialTypes = new List<ТипМатериала>(materialTypes);
+            filterMaterialTypes.Insert(0, new ТипМатериала { idТипМатериала = -1, Наименование = "Все типы" });
+            cmbFilterTypeMaterial.ItemsSource = filterMaterialTypes;
+            cmbFilterTypeMaterial.SelectedValue = -1;
         }
 
         public void LoadData()
