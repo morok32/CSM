@@ -456,18 +456,18 @@ namespace ComputerServiceManager.Windows
             }
 
             // Принудительно обновляем текстовые поля (на случай если binding не сработал)
-            _currentOrder.ИмяУстройства = txtModel.Text;
-            _currentOrder.СерийныйНомер = txtSerialNumber.Text;
-            _currentOrder.Неисправность = txtMalfunction.Text;
+            _currentOrder.ИмяУстройства = txtModel.Text?.Trim();
+            _currentOrder.СерийныйНомер = txtSerialNumber.Text?.Trim();
+            _currentOrder.Неисправность = txtMalfunction.Text?.Trim();
 
             // Обновляем данные клиента
             if (_currentOrder.Клиент == null)
                 _currentOrder.Клиент = new Клиент();
 
-            _currentOrder.Клиент.Фамилия = txtFIOClient_1.Text;
-            _currentOrder.Клиент.Имя = txtFIOClient_2.Text;
-            _currentOrder.Клиент.Отчество = txtFIOClient_3.Text;
-            _currentOrder.Клиент.НомерТелефона = txtPhoneNumber.Text;
+            _currentOrder.Клиент.Фамилия = txtFIOClient_1.Text?.Trim();
+            _currentOrder.Клиент.Имя = txtFIOClient_2.Text?.Trim();
+            _currentOrder.Клиент.Отчество = txtFIOClient_3.Text?.Trim();
+            _currentOrder.Клиент.НомерТелефона = txtPhoneNumber.Text?.Trim();
 
             try
             {
@@ -490,6 +490,34 @@ namespace ComputerServiceManager.Windows
         {
             DialogResult = false;
             Close();
+        }
+
+        private void txtModel_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtModel.Text != null)
+            {
+                var trimmed = txtModel.Text.Trim();
+                if (txtModel.Text != trimmed)
+                {
+                    int caretIndex = txtModel.CaretIndex;
+                    txtModel.Text = trimmed;
+                    txtModel.CaretIndex = Math.Min(caretIndex, txtModel.Text.Length);
+                }
+            }
+        }
+
+        private void txtSerialNumber_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txtSerialNumber.Text != null)
+            {
+                var trimmed = txtSerialNumber.Text.Trim();
+                if (txtSerialNumber.Text != trimmed)
+                {
+                    int caretIndex = txtSerialNumber.CaretIndex;
+                    txtSerialNumber.Text = trimmed;
+                    txtSerialNumber.CaretIndex = Math.Min(caretIndex, txtSerialNumber.Text.Length);
+                }
+            }
         }
 
         private void btnDeleteOrder_Click(object sender, RoutedEventArgs e)

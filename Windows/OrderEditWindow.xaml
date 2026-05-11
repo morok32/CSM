@@ -42,12 +42,14 @@
                                     <DockPanel>
                                         <Label Content="Модель" Width="70"/>
                                         <TextBox x:Name="txtModel" Width="120" Height="20" HorizontalAlignment="Right"
-                                                 Text="{Binding ИмяУстройства, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                 Text="{Binding ИмяУстройства, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 TextChanged="txtModel_TextChanged"/>
                                     </DockPanel>
                                     <DockPanel>
                                         <Label Content="Серийный номер" Width="120"/>
                                         <TextBox x:Name="txtSerialNumber" Width="120" Height="20" HorizontalAlignment="Right"
-                                                 Text="{Binding СерийныйНомер, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                Text="{Binding СерийныйНомер, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 TextChanged="txtSerialNumber_TextChanged"/>
                                     </DockPanel>
                                 </StackPanel>
                             </GroupBox>
@@ -127,6 +129,8 @@
                                         <TextBlock x:Name="txtOrderPrice" Width="100" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,0,0"/>
                                         <!--<Button x:Name="btnUpdateOrderPrice" Content="Обновить" Width="100" Height="20" HorizontalAlignment="Left" Click="btnUpdateOrderPrice_Click" Margin="10,0,0,0"/>-->
                                     </DockPanel>
+                                    <CheckBox Content="Внесена предоплата" Margin="5,0"/>
+                                    <CheckBox Content="Заказ оплачен" Margin="5,0"/>
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
