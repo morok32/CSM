@@ -90,11 +90,12 @@ namespace ComputerServiceManager.Controls
                         s.idСклад,
                         s.Количество,
                         s.Материал.idМатериал,
-                        MaterialName = s.Материал.Наименование,  // Явное имя для избежания конфликта
+                        MaterialName = s.Материал.Наименование,
                         s.Материал.БазоваяСтоимость,
-                        TypeName = s.Материал.ТипМатериала.Наименование,  // Явное имя для избежания конфликта
+                        TypeName = s.Материал.ТипМатериала.Наименование,
                         s.Материал.РозничнаяЦена,
                         s.Материал.Описание,
+                        s.Материал.idТипМатериала,
                         Reserved = materials.Sum(m => m.Количество) ?? 0
                     })
                 .ToList();
@@ -103,10 +104,11 @@ namespace ComputerServiceManager.Controls
             {
                 IdОстатка = item.idСклад,
                 Количество = item.Количество ?? 0,
-                НаименованиеМатериала = item.MaterialName ?? "Не указано",  // Используем новое имя
+                НаименованиеМатериала = item.MaterialName ?? "Не указано",
                 БазоваяСтоимость = item.БазоваяСтоимость ?? 0,
-                НаименованиеТипа = item.TypeName ?? "Не указан",  // Используем новое имя
+                НаименованиеТипа = item.TypeName ?? "Не указан",
                 IdМатериала = item.idМатериал,
+                idТипМатериала = item.idТипМатериала,
                 РозничнаяЦена = item.РозничнаяЦена,
                 Описание = item.Описание,
                 Доступно = item.Количество - item.Reserved
@@ -132,10 +134,11 @@ namespace ComputerServiceManager.Controls
                     return false;
             }
 
-            var selectedType = cmbFilterTypeMaterial.SelectedItem as ТипМатериала;
-            if (selectedType != null && selectedType.idТипМатериала != -1)
+            // Фильтр по типу материала
+            int selectedTypeId = (int)(cmbFilterTypeMaterial.SelectedValue ?? -1);
+            if (selectedTypeId != -1)
             {
-                if (selectedType.Наименование != row.НаименованиеТипа.ToString())
+                if (selectedTypeId != row.idТипМатериала)
                     return false;
             }
 

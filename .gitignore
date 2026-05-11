@@ -1,11 +1,31 @@
-# Visual Studio
-
-.vs/
-
-*.user
-
+```
+# Build artifacts
 bin/
-
 obj/
+*.exe
+*.dll
+*.pdb
+*.userprefs
 
+# Dependencies
 packages/
+
+# Logs
+*.log
+
+# User-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+```
