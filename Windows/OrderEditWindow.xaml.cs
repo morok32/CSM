@@ -410,9 +410,21 @@ namespace ComputerServiceManager.Windows
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(_currentOrder.Клиент.Фамилия))
+            if (string.IsNullOrWhiteSpace(_currentOrder.Клиент.Фамилия) 
+                || string.IsNullOrWhiteSpace(_currentOrder.Клиент.Имя) 
+                || string.IsNullOrWhiteSpace(_currentOrder.Клиент.Отчество))
             {
-                MessageBox.Show("Заполните Фамилию клиента.");
+                MessageBox.Show("Заполните ФИО клиента.");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(_currentOrder.Клиент.НомерТелефона) && string.IsNullOrWhiteSpace(_currentOrder.Клиент.Email))
+            {
+                MessageBox.Show("Заполните номер телефона клиента или его адрес электронной почты.");
+                return;
+            }
+            if (cmbxTechnician.SelectedItem == null)
+            {
+                MessageBox.Show("Выберете технического специалиста.");
                 return;
             }
 

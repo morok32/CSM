@@ -166,7 +166,7 @@
           <Key>
             <PropertyRef Name="idТипУстройства" />
           </Key>
-          <Property Name="idТипУстройства" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idТипУстройства" Type="int" Nullable="false" />
           <Property Name="Наименование" Type="nchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Услуги">
@@ -699,7 +699,7 @@
           <Key>
             <PropertyRef Name="idТипУстройства" />
           </Key>
-          <Property Name="idТипУстройства" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idТипУстройства" Type="Int32" Nullable="false" />
           <Property Name="Наименование" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="Заказ" Relationship="Self.FK_Заказ_ТипУстройства" FromRole="ТипУстройства" ToRole="Заказ" />
         </EntityType>

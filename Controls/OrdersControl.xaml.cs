@@ -208,10 +208,5 @@ namespace ComputerServiceManager.Controls
         {
             dateFromDatePicker.SelectedDate = null;
         }
-
-        private void buttonSave_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
