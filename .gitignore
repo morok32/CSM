@@ -1,31 +1,11 @@
-```
-# Build artifacts
-bin/
-obj/
-*.exe
-*.dll
-*.pdb
-*.userprefs
+# Visual Studio
 
-# Dependencies
-packages/
-
-# Logs
-*.log
-
-# User-specific files
 .vs/
+
 *.user
-*.suo
-*.userosscache
-*.sln.docstates
 
-# Environment
-.env
-.env.local
-*.env.*
+bin/
 
-# OS generated files
-.DS_Store
-Thumbs.db
-```
+obj/
+
+packages/
