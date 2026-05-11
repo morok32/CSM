@@ -74,7 +74,7 @@
                             <StackPanel Margin="5">
                                 <!-- Тип материала, процент наценки и НДС -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <Label Content="Тип:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Тип:" Width="140" VerticalAlignment="Center"/>
                                     <ComboBox x:Name="cmbxTypeMaterial"
                                               SelectedValuePath="idТипМатериала"
                                               DisplayMemberPath="Наименование"
@@ -85,29 +85,29 @@
 
                                 <!-- Наименование -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                                    <Label Content="Наименование:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Наименование:" Width="140" VerticalAlignment="Center"/>
                                     <TextBox x:Name="txtModel" Height="20" MinWidth="200"/>
                                 </StackPanel>
 
                                 <!-- Дата добавления -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                                    <Label Content="Дата добавления:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Дата добавления:" Width="140" VerticalAlignment="Center"/>
                                     <DatePicker x:Name="datePickerDateAdded" MinHeight="24" MinWidth="200"/>
                                 </StackPanel>
 
                                 <!-- Количество -->
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
-                                    <Label Content="Количество:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Количество:" Width="140" VerticalAlignment="Center"/>
                                     <TextBox x:Name="txtQuantity" Height="20" MinWidth="200"/>
                                 </StackPanel>
 
                                 <!-- Цена -->
                                 <StackPanel Orientation="Horizontal">
-                                    <Label Content="Закупочная стоимость:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Закупочная стоимость:" Width="140" VerticalAlignment="Center"/>
                                     <TextBox x:Name="txtBasePrice" Height="20" MinWidth="200" TextChanged="txtBasePrice_TextChanged"/>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <Label Content="Розничная стоимость:" Width="120" VerticalAlignment="Center"/>
+                                    <Label Content="Розничная стоимость:" Width="140" VerticalAlignment="Center"/>
                                     <TextBox x:Name="txtRetailPrice" Height="20" MinWidth="200" IsReadOnly="True"/>
                                 </StackPanel>
                             </StackPanel>

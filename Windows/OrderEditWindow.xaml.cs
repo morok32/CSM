@@ -506,16 +506,16 @@ namespace ComputerServiceManager.Windows
 
         private void txtModel_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtModel.Text != null)
-            {
-                var trimmed = txtModel.Text.Trim();
-                if (txtModel.Text != trimmed)
-                {
-                    int caretIndex = txtModel.CaretIndex;
-                    txtModel.Text = trimmed;
-                    txtModel.CaretIndex = Math.Min(caretIndex, txtModel.Text.Length);
-                }
-            }
+            //if (txtModel.Text != null)
+            //{
+            //    var trimmed = txtModel.Text.Trim();
+            //    if (txtModel.Text != trimmed)
+            //    {
+            //        int caretIndex = txtModel.CaretIndex;
+            //        txtModel.Text = trimmed;
+            //        txtModel.CaretIndex = Math.Min(caretIndex, txtModel.Text.Length);
+            //    }
+            //}
         }
 
         private void txtSerialNumber_TextChanged(object sender, TextChangedEventArgs e)
