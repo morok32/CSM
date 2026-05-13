@@ -111,7 +111,6 @@
     <Compile Include="sysdiagrams.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="WarehouseService.cs" />
     <Compile Include="Windows\OrderEditWindow.xaml.cs">
       <DependentUpon>OrderEditWindow.xaml</DependentUpon>
     </Compile>
