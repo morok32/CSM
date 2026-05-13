@@ -10,12 +10,16 @@ namespace ComputerServiceManager.Services
     public class OrderService : IDisposable
     {
         private readonly ComputerServiceManagerEntities _context;
-        private readonly WarehouseService _warehouseService;
 
         public OrderService()
         {
             _context = new ComputerServiceManagerEntities();
-            _warehouseService = new WarehouseService(_context);
+        }
+
+        // Для обратной совместимости (старый код, который создает WarehouseService)
+        public OrderService(ComputerServiceManagerEntities context)
+        {
+            _context = context;
         }
 
         public List<Заказ> GetOrders(string filterText = null)
@@ -158,7 +162,7 @@ namespace ComputerServiceManager.Services
         /// </summary>
         public void CompleteOrderWithDeduction(int orderId, List<OrderMaterialItem> materials)
         {
-            _warehouseService.DeductMaterials(orderId, materials);
+            DeductMaterials(orderId, materials);
         }
 
         /// <summary>
@@ -166,7 +170,121 @@ namespace ComputerServiceManager.Services
         /// </summary>
         public void CancelOrderWithReturn(int orderId, List<OrderMaterialItem> materials)
         {
-            _warehouseService.ReturnMaterials(orderId, materials);
+            ReturnMaterials(orderId, materials);
+        }
+
+        /// <summary>
+        /// Получить доступное количество материала (физическое минус все активные резервы)
+        /// </summary>
+        public decimal GetAvailableQuantity(int materialId)
+        {
+            var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == materialId);
+            decimal physicalQuantity = stock?.Количество ?? 0;
+
+            decimal? totalReservedNullable = _context.СоставЗаказа_Материалы
+                .Where(m => m.idМатериал == materialId && (m.idСтатус == 8))
+                .Sum(m => (decimal?)m.Количество);
+            decimal totalReserved = totalReservedNullable ?? 0;
+
+            return physicalQuantity - totalReserved;
+        }
+
+        /// <summary>
+        /// Получить физическое количество материала на складе
+        /// </summary>
+        public decimal GetPhysicalQuantity(int materialId)
+        {
+            var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == materialId);
+            return stock?.Количество ?? 0;
+        }
+
+        /// <summary>
+        /// Списание материалов со склада для заказа
+        /// Уменьшает физическое количество на складе (Склад.Количество)
+        /// </summary>
+        private void DeductMaterials(int orderId, List<OrderMaterialItem> materials)
+        {
+            foreach (var item in materials)
+            {
+                if (!item.IsNew && item.idПозиции > 0)
+                {
+                    var entity = _context.СоставЗаказа_Материалы.Find(item.idПозиции);
+                    if (entity != null && entity.idСтатус == 8)
+                    {
+                        var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
+                        if (stock != null)
+                        {
+                            if (stock.Количество >= entity.Количество)
+                            {
+                                stock.Количество -= entity.Количество;
+                                entity.idСтатус = 9;
+                            }
+                            else
+                            {
+                                throw new Exception($"Недостаточно материала '{item.Наименование}' на складе. Доступно: {stock.Количество}, требуется: {entity.Количество}");
+                            }
+                        }
+                    }
+                }
+            }
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Возврат материалов на склад при отмене заказа
+        /// Восстанавливает физическое количество на складе и снимает флаг списания
+        /// </summary>
+        private void ReturnMaterials(int orderId, List<OrderMaterialItem> materials)
+        {
+            var orderMaterials = _context.СоставЗаказа_Материалы
+                .Where(m => m.idЗаказ == orderId)
+                .ToList();
+
+            foreach (var entity in orderMaterials)
+            {
+                if (entity.idСтатус == 9)
+                {
+                    var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
+                    if (stock != null)
+                    {
+                        stock.Количество += entity.Количество;
+                    }
+                    entity.idСтатус = 8;
+                }
+            }
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Проверка доступности материалов на складе
+        /// </summary>
+        public (bool IsAvailable, List<string> Errors) CheckAvailability(List<OrderMaterialItem> materials)
+        {
+            var errors = new List<string>();
+
+            foreach (var item in materials)
+            {
+                if (!item.IsReserved && item.idСтатус != 8) continue;
+
+                decimal available = GetAvailableQuantity(item.idМатериала);
+
+                if (available < item.Количество)
+                {
+                    decimal physical = _context.Склад
+                        .Where(s => s.idМатериал == item.idМатериала)
+                        .Select(s => (decimal?)s.Количество)
+                        .FirstOrDefault() ?? 0;
+
+                    decimal? reservedNullable = _context.СоставЗаказа_Материалы
+                        .Where(m => m.idМатериал == item.idМатериала && (m.idСтатус == 8))
+                        .Sum(m => (decimal?)m.Количество);
+                    decimal reserved = reservedNullable ?? 0;
+
+                    errors.Add($"Недостаточно материала '{item.Наименование}'. Доступно: {available}, требуется: {item.Количество} (на складе: {physical}, зарезервировано: {reserved})");
+                }
+            }
+
+            return (errors.Count == 0, errors);
         }
 
         private void SyncMaterials(int orderId, List<OrderMaterialItem> items, int? previousStatusId = null, int? currentStatusId = null)
