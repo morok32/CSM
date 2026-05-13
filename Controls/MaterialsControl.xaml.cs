@@ -26,7 +26,7 @@ namespace ComputerServiceManager.Controls
         private Материал _currentMaterial;
         private bool _isEditing;
         private bool _isTechnicianMode;  // Флаг режима техника
-        private decimal _globalVatPercent = 5m; // Глобальный процент НДС
+        //private decimal _globalVatPercent = 5m; // Глобальный процент НДС
         private decimal _globalMarkupPercent = 0m; // Глобальный процент наценки
 
         public MaterialsControl()
@@ -418,8 +418,8 @@ namespace ComputerServiceManager.Controls
         private string CalculateRetailPriceFromBaseAndMarkup(decimal basePrice)
         {
             decimal priceWithMarkup = basePrice * (1 + _globalMarkupPercent / 100);
-            decimal retailPrice = priceWithMarkup * (1 + _globalVatPercent / 100);
-            return retailPrice.ToString("F2");
+            //decimal retailPrice = priceWithMarkup * (1 + _globalVatPercent / 100);
+            return priceWithMarkup.ToString("F2");
         }
 
         private void CalculateRetailPrice()
@@ -432,8 +432,8 @@ namespace ComputerServiceManager.Controls
             {
                 // Сначала рассчитываем цену с наценкой, затем добавляем НДС
                 decimal priceWithMarkup = basePrice * (1 + markupPercent / 100);
-                decimal retailPrice = priceWithMarkup * (1 + _globalVatPercent / 100);
-                txtRetailPrice.Text = retailPrice.ToString("F2");
+                //decimal retailPrice = priceWithMarkup * (1 + _globalVatPercent / 100);
+                txtRetailPrice.Text = priceWithMarkup.ToString("F2");
             }
             else
             {

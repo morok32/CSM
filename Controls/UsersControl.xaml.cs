@@ -165,7 +165,7 @@ namespace ComputerServiceManager.Controls
                     txtEmail.Text = _currentUser.Email;
                     txtPhone.Text = _currentUser.НомерТелефона;
                     txtLogin.Text = _currentUser.Логин;
-                    txtPassword.Password = _currentUser.Пароль;
+                    txtPassword.Text = _currentUser.Пароль;
                     chkActive.IsChecked = _currentUser.Активность ?? true;
 
                     _isEditing = true;
@@ -190,7 +190,7 @@ namespace ComputerServiceManager.Controls
                 errors.AppendLine("- Укажите имя.");
             if (string.IsNullOrWhiteSpace(txtLogin.Text))
                 errors.AppendLine("- Укажите логин.");
-            if (string.IsNullOrWhiteSpace(txtPassword.Password) && _currentUser.idПользователь == 0)
+            if (string.IsNullOrWhiteSpace(txtPassword.Text) && _currentUser.idПользователь == 0)
                 errors.AppendLine("- Укажите пароль.");
             if (string.IsNullOrWhiteSpace(txtEmail.Text))
                 errors.AppendLine("- Укажите email.");
@@ -210,8 +210,8 @@ namespace ComputerServiceManager.Controls
                 _currentUser.Email = txtEmail.Text;
                 _currentUser.НомерТелефона = txtPhone.Text;
                 _currentUser.Логин = txtLogin.Text;
-                if (!string.IsNullOrWhiteSpace(txtPassword.Password))
-                    _currentUser.Пароль = txtPassword.Password;
+                if (!string.IsNullOrWhiteSpace(txtPassword.Text))
+                    _currentUser.Пароль = txtPassword.Text;
                 _currentUser.Активность = chkActive.IsChecked ?? true;
 
                 // Гарантируем, что навигационное свойство не помешает сохранению
@@ -288,7 +288,7 @@ namespace ComputerServiceManager.Controls
             txtEmail.Text = "";
             txtPhone.Text = "";
             txtLogin.Text = "";
-            txtPassword.Password = "";
+            txtPassword.Text = "";
             chkActive.IsChecked = false;
         }
 

@@ -113,7 +113,7 @@
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <Label Content="Пароль:" Width="120" VerticalAlignment="Center"/>
-                                    <PasswordBox x:Name="txtPassword" Height="20" MinWidth="200"/>
+                                    <TextBox x:Name="txtPassword" Height="20" MinWidth="200"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
