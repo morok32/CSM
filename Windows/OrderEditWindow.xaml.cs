@@ -19,12 +19,14 @@ namespace ComputerServiceManager.Windows
         private ObservableCollection<OrderServiceItem> _services;
         private bool _isNewOrder;
         private ComputerServiceManagerEntities _dictContext;
+        private readonly OrderService _orderService;
 
         public OrderEditWindow(Заказ order)
         {
             InitializeComponent();
             _isNewOrder = order == null;
             _dictContext = new ComputerServiceManagerEntities();
+            _orderService = new OrderService();
 
             if (_isNewOrder)
             {
@@ -40,12 +42,9 @@ namespace ComputerServiceManager.Windows
             else
             {
                 _currentOrder = order;
-                using (var svc = new OrderService())
-                {
-                    var items = svc.GetOrderItems(order.idЗаказ);
-                    _materials = new ObservableCollection<OrderMaterialItem>(items.Materials);
-                    _services = new ObservableCollection<OrderServiceItem>(items.Services);
-                }
+                var items = _orderService.GetOrderItems(order.idЗаказ);
+                _materials = new ObservableCollection<OrderMaterialItem>(items.Materials);
+                _services = new ObservableCollection<OrderServiceItem>(items.Services);
             }
 
             DataContext = _currentOrder;
@@ -191,23 +190,20 @@ namespace ComputerServiceManager.Windows
             {
                 try
                 {
-                    using (var context = new ComputerServiceManagerEntities())
+                    decimal available = _orderService.GetAvailableQuantity(item.idМатериала);
+                    decimal physical = GetPhysicalQuantity(item.idМатериала);
+
+                    // Проверка: если материал уже списан
+                    if (item.idСтатус == 9)
                     {
-                        var warehouseSvc = new WarehouseService(context);
-                        decimal available = warehouseSvc.GetAvailableQuantity(item.idМатериала);
-                        decimal physical = warehouseSvc.GetPhysicalQuantity(item.idМатериала);
+                        MessageBox.Show($"Материал '{item.Наименование}' уже списан со склада.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
 
-                        // Проверка: если материал уже списан
-                        if (item.idСтатус == 9)
-                        {
-                            MessageBox.Show($"Материал '{item.Наименование}' уже списан со склада.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                            return;
-                        }
-
-                        // Проверка статуса заказа - списание разрешено только для заказов со статусом "Выдан клиенту" (id=6)
-                        int currentOrderStatus = _currentOrder.idСтатус ?? 1;
-                        if (currentOrderStatus != 6)
-                        {
+                    // Проверка статуса заказа - списание разрешено только для заказов со статусом "Выдан клиенту" (id=6)
+                    int currentOrderStatus = _currentOrder.idСтатус ?? 1;
+                    if (currentOrderStatus != 6)
+                    {
                             MessageBox.Show("Списание разрешено только у заказов которые имеют статус 'Выдан клиенту'",
                                 "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
@@ -431,20 +427,16 @@ namespace ComputerServiceManager.Windows
             var materialsToCheck = _materials.Where(m => m.idСтатус == 8 || m.IsReserved).ToList();
             if (materialsToCheck.Count > 0)
             {
-                using (var context = new ComputerServiceManagerEntities())
+                var result = _orderService.CheckAvailability(materialsToCheck);
+                if (!result.IsAvailable)
                 {
-                    var warehouseSvc = new WarehouseService(context);
-                    var result = warehouseSvc.CheckAvailability(materialsToCheck);
-                    if (!result.IsAvailable)
+                    string errorMsg = "Недостаточно материалов на складе:\n";
+                    foreach (var err in result.Errors)
                     {
-                        string errorMsg = "Недостаточно материалов на складе:\n";
-                        foreach (var err in result.Errors)
-                        {
-                            errorMsg += "\n" + err;
-                        }
-                        MessageBox.Show(errorMsg, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
+                        errorMsg += "\n" + err;
                     }
+                    MessageBox.Show(errorMsg, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
             }
 
