@@ -191,7 +191,7 @@ namespace ComputerServiceManager.Windows
                 try
                 {
                     decimal available = _orderService.GetAvailableQuantity(item.idМатериала);
-                    decimal physical = GetPhysicalQuantity(item.idМатериала);
+                    decimal physical = _orderService.GetPhysicalQuantity(item.idМатериала);
 
                     // Проверка: если материал уже списан
                     if (item.idСтатус == 9)
@@ -204,15 +204,17 @@ namespace ComputerServiceManager.Windows
                     int currentOrderStatus = _currentOrder.idСтатус ?? 1;
                     if (currentOrderStatus != 6)
                     {
-                            MessageBox.Show("Списание разрешено только у заказов которые имеют статус 'Выдан клиенту'",
-                                "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            return;
-                        }
+                        MessageBox.Show("Списание разрешено только у заказов которые имеют статус 'Выдан клиенту'",
+                            "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
 
-                        // Проверка доступности материала
-                        if (available < item.Количество)
+                    // Проверка доступности материала
+                    if (available < item.Количество)
+                    {
+                        using (var ctx = new ComputerServiceManagerEntities())
                         {
-                            decimal? reservedNullable = context.СоставЗаказа_Материалы
+                            decimal? reservedNullable = ctx.СоставЗаказа_Материалы
                                 .Where(m => m.idМатериал == item.idМатериала && (m.idСтатус == 8))
                                 .Sum(m => (decimal?)m.Количество);
                             decimal reserved = reservedNullable ?? 0;
@@ -221,29 +223,32 @@ namespace ComputerServiceManager.Windows
                                 $"Доступно: {available}, требуется: {item.Количество}\n" +
                                 $"(на складе: {physical}, зарезервировано другими заказами: {reserved})",
                                 "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                            return;
                         }
+                        return;
+                    }
 
-                        // Предупреждение о невозможности возврата
-                        var confirmResult = MessageBox.Show(
-                            "Внимание! После списания позиция не сможет быть возвращена на склад.\n\nПродолжить?",
-                            "Подтверждение списания",
-                            MessageBoxButton.YesNo,
-                            MessageBoxImage.Warning);
+                    // Предупреждение о невозможности возврата
+                    var confirmResult = MessageBox.Show(
+                        "Внимание! После списания позиция не сможет быть возвращена на склад.\n\nПродолжить?",
+                        "Подтверждение списания",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
 
-                        if (confirmResult != MessageBoxResult.Yes)
+                    if (confirmResult != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+
+                    // Находим позицию в БД и выполняем физическое списание
+                    if (!item.IsNew && item.idПозиции > 0)
+                    {
+                        using (var ctx = new ComputerServiceManagerEntities())
                         {
-                            return;
-                        }
-
-                        // Находим позицию в БД и выполняем физическое списание
-                        if (!item.IsNew && item.idПозиции > 0)
-                        {
-                            var entity = context.СоставЗаказа_Материалы.Find(item.idПозиции);
+                            var entity = ctx.СоставЗаказа_Материалы.Find(item.idПозиции);
                             if (entity != null)
                             {
                                 // Уменьшаем физическое количество на складе
-                                var stock = context.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
+                                var stock = ctx.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
                                 if (stock != null)
                                 {
                                     if (stock.Количество >= entity.Количество)
@@ -252,7 +257,7 @@ namespace ComputerServiceManager.Windows
 
                                         // Обновляем статус на "Списан" (id=9)
                                         entity.idСтатус = 9;
-                                        context.SaveChanges();
+                                        ctx.SaveChanges();
 
                                         // Обновляем статус в UI
                                         item.idСтатус = 9;
@@ -270,10 +275,10 @@ namespace ComputerServiceManager.Windows
                                 }
                             }
                         }
-                        else
-                        {
-                            MessageBox.Show("Сначала сохраните заказ, затем списывайте материалы.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Сначала сохраните заказ, затем списывайте материалы.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
                 catch (Exception ex)

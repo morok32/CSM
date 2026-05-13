@@ -1,1 +1,23 @@
-(empty)
+```
+# Compiled and build artifacts
+*.obj
+*.exe
+*.dll
+*.pdb
+*.userprefs
+# Dependencies
+packages/
+# Editors
+.vs/
+*.user
+*.suo
+# Logs and temp files
+*.log
+*.tmp
+Thumbs.db
+# Build outputs
+bin/
+obj/
+Debug/
+Release/
+```
