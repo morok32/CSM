@@ -1,1 +1,11 @@
-(empty)
+# Visual Studio
+
+.vs/
+
+*.user
+
+bin/
+
+obj/
+
+packages/
