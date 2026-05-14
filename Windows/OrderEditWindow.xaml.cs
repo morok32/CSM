@@ -404,8 +404,10 @@ namespace ComputerServiceManager.Windows
             // Безопасное суммирование
             decimal matTotal = _materials.Sum(m => m.СтоимостьПозиции);
             decimal svcTotal = _services.Sum(s => s.СтоимостьПозиции);
+            //decimal matForPrepayment = _materials.Sum(m => m.СтоимостьПозиции);
 
             txtTotalCostFromStructure.Text = (matTotal + svcTotal).ToString("F2");
+            txtOrderPrepayment.Text = (matTotal).ToString("F2");
             txtOrderPrice.Text = (matTotal + svcTotal).ToString("F2");
         }
 
