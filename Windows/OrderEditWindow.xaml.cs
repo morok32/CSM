@@ -124,15 +124,7 @@ namespace ComputerServiceManager.Windows
         {
             if (dgMaterials.SelectedItem is OrderMaterialItem item)
             {
-                // Проверка: нельзя удалить списанный материал (idСтатус == 9)
-                if (item.idСтатус == 9)
-                {
-                    MessageBox.Show("Нельзя удалить списанный материал. Сначала необходимо выполнить возврат на склад.",
-                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                // Удаляем позицию из списка (резерв автоматически снимается)
+                // Удаляем позицию из списка (резерв автоматически снимается при сохранении)
                 if (item.idПозиции == 0)
                 {
                     _materials.Remove(item);
@@ -179,169 +171,9 @@ namespace ComputerServiceManager.Windows
         }
 
         /// <summary>
-        /// Списание материала со склада (физическое уменьшение количества)
-        /// При добавлении в заказ материал уже зарезервирован (idСтатус = 8 "Резерв")
-        /// По нажатию "Списать" уменьшается физическое количество на складе и статус меняется на "Списан" (idСтатус = 9)
-        /// </summary>
-        private void btnWriteOff_Click(object sender, RoutedEventArgs e)
-        {
-            // Получаем выбранный элемент из DataGrid
-            if (dgMaterials.SelectedItem is OrderMaterialItem item)
-            {
-                try
-                {
-                    decimal available = _orderService.GetAvailableQuantity(item.idМатериала);
-                    decimal physical = _orderService.GetPhysicalQuantity(item.idМатериала);
-
-                    // Проверка: если материал уже списан
-                    if (item.idСтатус == 9)
-                    {
-                        MessageBox.Show($"Материал '{item.Наименование}' уже списан со склада.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                        return;
-                    }
-
-                    // Проверка статуса заказа - списание разрешено только для заказов со статусом "Выдан клиенту" (id=6)
-                    int currentOrderStatus = _currentOrder.idСтатус ?? 1;
-                    if (currentOrderStatus != 6)
-                    {
-                        MessageBox.Show("Списание разрешено только у заказов которые имеют статус 'Выдан клиенту'",
-                            "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    // Проверка доступности материала
-                    if (available < item.Количество)
-                    {
-                        using (var ctx = new ComputerServiceManagerEntities())
-                        {
-                            decimal? reservedNullable = ctx.СоставЗаказа_Материалы
-                                .Where(m => m.idМатериал == item.idМатериала && (m.idСтатус == 8))
-                                .Sum(m => (decimal?)m.Количество);
-                            decimal reserved = reservedNullable ?? 0;
-
-                            MessageBox.Show($"Недостаточно материала '{item.Наименование}'. " +
-                                $"Доступно: {available}, требуется: {item.Количество}\n" +
-                                $"(на складе: {physical}, зарезервировано другими заказами: {reserved})",
-                                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        }
-                        return;
-                    }
-
-                    // Предупреждение о невозможности возврата
-                    var confirmResult = MessageBox.Show(
-                        "Внимание! После списания позиция не сможет быть возвращена на склад.\n\nПродолжить?",
-                        "Подтверждение списания",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    if (confirmResult != MessageBoxResult.Yes)
-                    {
-                        return;
-                    }
-
-                    // Находим позицию в БД и выполняем физическое списание
-                    if (!item.IsNew && item.idПозиции > 0)
-                    {
-                        using (var ctx = new ComputerServiceManagerEntities())
-                        {
-                            var entity = ctx.СоставЗаказа_Материалы.Find(item.idПозиции);
-                            if (entity != null)
-                            {
-                                // Уменьшаем физическое количество на складе
-                                var stock = ctx.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
-                                if (stock != null)
-                                {
-                                    if (stock.Количество >= entity.Количество)
-                                    {
-                                        stock.Количество -= entity.Количество;
-
-                                        // Обновляем статус на "Списан" (id=9)
-                                        entity.idСтатус = 9;
-                                        ctx.SaveChanges();
-
-                                        // Обновляем статус в UI
-                                        item.idСтатус = 9;
-
-                                        dgMaterials.Items.Refresh();
-                                        UpdateTotalAmount();
-
-                                        MessageBox.Show($"Материал '{item.Наименование}' списан со склада!\nФизическое количество уменьшено на {item.Количество}.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show($"Недостаточно материала '{item.Наименование}' на складе. Доступно: {stock.Количество}, требуется: {entity.Количество}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Сначала сохраните заказ, затем списывайте материалы.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка при списании: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Выберите материал для списания.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        /// <summary>
-        /// Проверка возможности смены статуса заказа
-        /// </summary>
-        private bool CanChangeStatus(int newStatusId, out string errorMessage)
-        {
-            errorMessage = string.Empty;
-
-            // Статусы: 1-Новый, 2-Диагностика, 3-Ожидает запчастей, 4-В работе, 5-Готов, 6-Отдан, 7-Отменен
-            int currentStatusId = _currentOrder.idСтатус ?? 1;
-
-            // Проверяем есть ли материалы у которых idСтатус = 9 (физически списаны)
-            var hasWrittenOffMaterials = _materials.Any(m => m.idСтатус == 9);
-
-            // Смена с (4,5,6) на (1,2,3) - если есть списанные материалы, нужно сначала вернуть
-            if ((currentStatusId == 4 || currentStatusId == 5 || currentStatusId == 6) &&
-                (newStatusId == 1 || newStatusId == 2 || newStatusId == 3))
-            {
-                if (hasWrittenOffMaterials)
-                {
-                    errorMessage = "Сначала нужно вернуть все списанные материалы на склад! Используйте кнопку 'Вернуть' в списке материалов.";
-                    return false;
-                }
-            }
-
-            // Смена с (1,2,3) на (4,5,6) - если нет списанных материалов, нужно сначала списать
-            if ((currentStatusId == 1 || currentStatusId == 2 || currentStatusId == 3) &&
-                (newStatusId == 4 || newStatusId == 5 || newStatusId == 6))
-            {
-                if (!hasWrittenOffMaterials)
-                {
-                    errorMessage = "Сначала нужно списать материалы со склада! Используйте кнопку 'Списать' в списке материалов.";
-                    return false;
-                }
-            }
-
-            // Смена с 7 (Отменен) на любой другой - если есть списанные материалы, нужно сначала вернуть
-            if (currentStatusId == 7 && newStatusId != 7)
-            {
-                if (hasWrittenOffMaterials)
-                {
-                    errorMessage = "Сначала нужно вернуть все списанные материалы на склад! Используйте кнопку 'Вернуть' в списке материалов.";
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Обработчик изменения статуса заказа
+        /// При смене статуса на "Выдан клиенту" (6) материалы автоматически списываются
+        /// При смене статуса на "Отменен" (7) материалы автоматически возвращаются
         /// </summary>
         private void cmbxStatusInCard_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -355,14 +187,23 @@ namespace ComputerServiceManager.Windows
             if (newStatusId == currentStatusId)
                 return;
 
-            // Проверяем возможность смены статуса
-            if (!CanChangeStatus(newStatusId, out string errorMessage))
+            // Автоматическое списание материалов при смене статуса на "Выдан клиенту" (6)
+            if (newStatusId == 6 && currentStatusId != 6)
             {
-                MessageBox.Show(errorMessage, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                // Возвращаем старый статус в ComboBox
-                cmbxStatusInCard.SelectedValue = currentStatusId;
-                return;
+                try
+                {
+                    using (var service = new OrderService())
+                    {
+                        service.WriteOffMaterialsForDeliveredOrder(_currentOrder.idЗаказ, _materials.ToList());
+                    }
+                    MessageBox.Show("Заказ выдан клиенту. Все материалы списаны со склада.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при списании материалов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    cmbxStatusInCard.SelectedValue = currentStatusId;
+                    return;
+                }
             }
 
             // Автоматическая очистка резервов при отмене заказа (статус 7)
@@ -430,7 +271,7 @@ namespace ComputerServiceManager.Windows
                 return;
             }
 
-            var materialsToCheck = _materials.Where(m => m.idСтатус == 8 || m.IsReserved).ToList();
+            var materialsToCheck = _materials.Where(m => m.idСтатус == 8).ToList();
             if (materialsToCheck.Count > 0)
             {
                 var result = _orderService.CheckAvailability(materialsToCheck);

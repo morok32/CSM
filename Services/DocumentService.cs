@@ -275,33 +275,4 @@ namespace ComputerServiceManager.Services
             _context?.Dispose();
         }
     }
-
-    /// <summary>
-    /// Вспомогательный класс для отображения материалов в составе заказа
-    /// </summary>
-    public class OrderMaterialItem
-    {
-        public int idПозиции { get; set; }
-        public int idМатериала { get; set; }
-        public string Наименование { get; set; }
-        public int Количество { get; set; }
-        public decimal ЦенаЗаЕдиницу { get; set; }
-        public decimal СтоимостьПозиции { get; set; }
-        public int idСтатус { get; set; }
-        public bool IsNew { get; set; }
-    }
-
-    /// <summary>
-    /// Вспомогательный класс для отображения услуг в составе заказа
-    /// </summary>
-    public class OrderServiceItem
-    {
-        public int idПозиции { get; set; }
-        public int idУслуги { get; set; }
-        public string Наименование { get; set; }
-        public int Количество { get; set; }
-        public decimal ЦенаЗаЕдиницу { get; set; }
-        public decimal СтоимостьПозиции { get; set; }
-        public bool IsNew { get; set; }
-    }
 }

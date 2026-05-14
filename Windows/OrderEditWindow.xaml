@@ -250,31 +250,6 @@
                                         <DataGridTextColumn Header="Цена" Binding="{Binding ЦенаЗаЕдиницу, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Width="100"/>
                                         <DataGridTextColumn Header="Сумма" Binding="{Binding СтоимостьПозиции, Mode=OneWay, StringFormat=F2}" IsReadOnly="True" Width="100"/>
 
-                                        <!-- Кнопка Списать/Списано -->
-                                        <DataGridTemplateColumn Header="" Width="80">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Button x:Name="btnWriteOff" Content="Списать"
-                                                            Click="btnWriteOff_Click"
-                                                            HorizontalAlignment="Center" Padding="5,2">
-                                                        <Button.Style>
-                                                            <Style TargetType="Button">
-                                                                <Setter Property="IsEnabled" Value="True"/>
-                                                                <Style.Triggers>
-                                                                    <!-- Статус 9 = Списан -->
-                                                                    <DataTrigger Binding="{Binding idСтатус}" Value="9">
-                                                                        <Setter Property="Content" Value="Списано"/>
-                                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                                        <Setter Property="Background" Value="#FFDDDDDD"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Button.Style>
-                                                    </Button>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-
                                         <!-- Кнопка Удалить -->
                                         <DataGridTemplateColumn Header="" Width="70">
                                             <DataGridTemplateColumn.CellTemplate>
