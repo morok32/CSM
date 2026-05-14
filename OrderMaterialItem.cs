@@ -1,4 +1,4 @@
-﻿using System;
+﻿using ComputerServiceManager.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -45,10 +45,10 @@ namespace ComputerServiceManager.Models
         /// <summary>
         /// ID статуса материала (8=Резерв, 9=Списан)
         /// </summary>
-        public int? idСтатус 
-        { 
-            get => _idСтатус; 
-            set { _idСтатус = value; OnPropertyChanged(); OnPropertyChanged(nameof(СтатусТекст)); } 
+        public int? idСтатус
+        {
+            get => _idСтатус;
+            set { _idСтатус = value; OnPropertyChanged(); OnPropertyChanged(nameof(СтатусТекст)); }
         }
 
         public string СтатусТекст
@@ -63,16 +63,6 @@ namespace ComputerServiceManager.Models
                 }
             }
         }
-
-        /// <summary>
-        /// Флаг: материал списан (idСтатус == 9)
-        /// </summary>
-        public bool IsWrittenOff => _idСтатус == 9;
-
-        /// <summary>
-        /// Флаг: материал зарезервирован (idСтатус == 8)
-        /// </summary>
-        public bool IsReserved => _idСтатус == 8;
 
         // Флаг новой записи (еще не сохраненной в БД)
         public bool IsNew { get => _isNew; set { _isNew = value; OnPropertyChanged(); } }

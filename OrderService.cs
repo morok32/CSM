@@ -158,8 +158,43 @@ namespace ComputerServiceManager.Services
         }
 
         /// <summary>
-        /// Завершить заказ со списанием материалов (статус "В работе")
+        /// Списание материалов для заказа, выданного клиенту
+        /// Вызывается автоматически при смене статуса на "Выдан клиенту" (6)
         /// </summary>
+        public void WriteOffMaterialsForDeliveredOrder(int orderId, List<OrderMaterialItem> materials)
+        {
+            foreach (var item in materials)
+            {
+                if (!item.IsNew && item.idПозиции > 0)
+                {
+                    var entity = _context.СоставЗаказа_Материалы.Find(item.idПозиции);
+                    if (entity != null && entity.idСтатус == 8) // Только резервированные материалы
+                    {
+                        var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
+                        if (stock != null)
+                        {
+                            if (stock.Количество >= entity.Количество)
+                            {
+                                stock.Количество -= entity.Количество;
+                                entity.idСтатус = 9; // Списан
+                                item.idСтатус = 9;   // Обновляем UI модель
+                            }
+                            else
+                            {
+                                throw new Exception($"Недостаточно материала '{item.Наименование}' на складе. Доступно: {stock.Количество}, требуется: {entity.Количество}");
+                            }
+                        }
+                    }
+                }
+            }
+            _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Завершить заказ со списанием материалов (статус "В работе")
+        /// Устаревший метод, используется для обратной совместимости
+        /// </summary>
+        [Obsolete("Используйте WriteOffMaterialsForDeliveredOrder")]
         public void CompleteOrderWithDeduction(int orderId, List<OrderMaterialItem> materials)
         {
             DeductMaterials(orderId, materials);
@@ -187,15 +222,6 @@ namespace ComputerServiceManager.Services
             decimal totalReserved = totalReservedNullable ?? 0;
 
             return physicalQuantity - totalReserved;
-        }
-
-        /// <summary>
-        /// Получить физическое количество материала на складе
-        /// </summary>
-        public decimal GetPhysicalQuantity(int materialId)
-        {
-            var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == materialId);
-            return stock?.Количество ?? 0;
         }
 
         /// <summary>
@@ -264,21 +290,19 @@ namespace ComputerServiceManager.Services
 
             foreach (var item in materials)
             {
-                if (!item.IsReserved && item.idСтатус != 8) continue;
+                if (item.idСтатус != 8) continue;
 
                 decimal available = GetAvailableQuantity(item.idМатериала);
 
                 if (available < item.Количество)
                 {
-                    decimal physical = _context.Склад
+                    var stockInfo = _context.Склад
                         .Where(s => s.idМатериал == item.idМатериала)
-                        .Select(s => (decimal?)s.Количество)
-                        .FirstOrDefault() ?? 0;
+                        .Select(s => new { Physical = s.Количество })
+                        .FirstOrDefault();
 
-                    decimal? reservedNullable = _context.СоставЗаказа_Материалы
-                        .Where(m => m.idМатериал == item.idМатериала && (m.idСтатус == 8))
-                        .Sum(m => (decimal?)m.Количество);
-                    decimal reserved = reservedNullable ?? 0;
+                    decimal physical = stockInfo?.Physical ?? 0;
+                    decimal reserved = physical - available;
 
                     errors.Add($"Недостаточно материала '{item.Наименование}'. Доступно: {available}, требуется: {item.Количество} (на складе: {physical}, зарезервировано: {reserved})");
                 }
@@ -441,7 +465,7 @@ namespace ComputerServiceManager.Services
                         // Теперь удаляем сам заказ
                         context.Заказ.Remove(order);
                     }
-                    
+
                     context.SaveChanges();
                     transaction.Commit();
                 }
