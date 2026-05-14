@@ -265,6 +265,11 @@
                                                                     <DataTrigger Binding="{Binding idСтатус}" Value="9">
                                                                         <Setter Property="IsEnabled" Value="False"/>
                                                                     </DataTrigger>
+                                                                    <!-- Статус заказа = 6 (Выдан клиенту) - кнопка неактивна -->
+                                                                    <DataTrigger Binding="{Binding ElementName=ThisWindow, Path=DataContext.idСтатус}" Value="6">
+                                                                        <Setter Property="IsEnabled" Value="False"/>
+                                                                        <Setter Property="ToolTip" Value="Нельзя изменять состав заказа со статусом 'Выдан клиенту'"/>
+                                                                    </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Button.Style>
@@ -328,16 +333,10 @@
                                                             <Style TargetType="Button">
                                                                 <Setter Property="IsEnabled" Value="True"/>
                                                                 <Style.Triggers>
-                                                                    <!-- Блокируем удаление при статусе заказа = 6 -->
+                                                                    <!-- Блокируем удаление при статусе заказа = 6 (Выдан клиенту) -->
                                                                     <DataTrigger Binding="{Binding ElementName=ThisWindow, Path=DataContext.idСтатус}" Value="6">
                                                                         <Setter Property="IsEnabled" Value="False"/>
-                                                                        <Setter Property="ToolTip" Value="Нельзя изменять состав заказа с статусом 'Выдан клиенту'"/>
-                                                                    </DataTrigger>
-
-                                                                    <!-- Дополнительно блокируем для отмененных заказов (статус 7) -->
-                                                                    <DataTrigger Binding="{Binding ElementName=ThisWindow, Path=DataContext.idСтатус}" Value="7">
-                                                                        <Setter Property="IsEnabled" Value="False"/>
-                                                                        <Setter Property="ToolTip" Value="Нельзя изменять состав отмененного заказа"/>
+                                                                        <Setter Property="ToolTip" Value="Нельзя изменять состав заказа со статусом 'Выдан клиенту'"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>

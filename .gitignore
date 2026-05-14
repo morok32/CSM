@@ -1,11 +1,62 @@
-# Visual Studio
+```
+# Build artifacts
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.out
 
-.vs/
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+target/
+.gradle/
 
-*.user
+# Editors/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
 
-bin/
+# System
+.DS_Store
+Thumbs.db
+.env
+.env.local
+*.env.*
 
-obj/
+# Logs
+*.log
 
-packages/
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+```

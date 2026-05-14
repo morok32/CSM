@@ -68,6 +68,12 @@ namespace ComputerServiceManager.Windows
                 cmbxStatusInCard.IsEnabled = false;
             }
 
+            // Блокировка ComboBox статуса для выданных заказов (статус 6)
+            if (_currentOrder.idСтатус == 6)
+            {
+                cmbxStatusInCard.IsEnabled = false;
+            }
+
             cmbxTypeDevice.ItemsSource = _dictContext.ТипУстройства.ToList();
             cmbxTypeDevice.DisplayMemberPath = "Наименование";
             cmbxTypeDevice.SelectedValuePath = "idТипУстройства";
@@ -98,6 +104,18 @@ namespace ComputerServiceManager.Windows
 
         private void btnAddMaterial_Click(object sender, RoutedEventArgs e)
         {
+            // Проверка: если статус заказа "Выдан клиенту" (6), блокируем добавление
+            if (_currentOrder.idСтатус == 6)
+            {
+                MessageBox.Show(
+                    "Нельзя добавить материал в заказ со статусом 'Выдан клиенту'!\n\n" +
+                    "Заказ уже завершен.",
+                    "Предупреждение",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
             if (cmbMaterialSelect.SelectedItem is Материал selectedMat)
             {
                 var newItem = new OrderMaterialItem
@@ -121,6 +139,18 @@ namespace ComputerServiceManager.Windows
         {
             if (dgMaterials.SelectedItem is OrderMaterialItem item)
             {
+                // Проверка: если статус заказа "Выдан клиенту" (6), блокируем удаление
+                if (_currentOrder.idСтатус == 6)
+                {
+                    MessageBox.Show(
+                        "Нельзя удалить материал из заказа со статусом 'Выдан клиенту'!\n\n" +
+                        "Материалы уже списаны со склада.",
+                        "Предупреждение",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
                 // Удаляем позицию из списка (резерв автоматически снимается при сохранении)
                 if (item.idПозиции == 0)
                 {
@@ -141,6 +171,18 @@ namespace ComputerServiceManager.Windows
 
         private void btnAddService_Click(object sender, RoutedEventArgs e)
         {
+            // Проверка: если статус заказа "Выдан клиенту" (6), блокируем добавление
+            if (_currentOrder.idСтатус == 6)
+            {
+                MessageBox.Show(
+                    "Нельзя добавить услугу в заказ со статусом 'Выдан клиенту'!\n\n" +
+                    "Заказ уже завершен.",
+                    "Предупреждение",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
             if (cmbServiceSelect.SelectedItem is Услуги selectedSvc)
             {
                 var newItem = new OrderServiceItem
@@ -162,6 +204,18 @@ namespace ComputerServiceManager.Windows
         {
             if (dgServices.SelectedItem is OrderServiceItem item)
             {
+                // Проверка: если статус заказа "Выдан клиенту" (6), блокируем удаление
+                if (_currentOrder.idСтатус == 6)
+                {
+                    MessageBox.Show(
+                        "Нельзя удалить услугу из заказа со статусом 'Выдан клиенту'!\n\n" +
+                        "Заказ уже завершен.",
+                        "Предупреждение",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    return;
+                }
+
                 _services.Remove(item);
                 UpdateTotalAmount();
             }
@@ -184,28 +238,25 @@ namespace ComputerServiceManager.Windows
             if (newStatusId == currentStatusId)
                 return;
 
-            // Автоматическое списание материалов при смене статуса на "Выдан клиенту" (6)
-            if (newStatusId == 6 && currentStatusId != 6)
+            // Проверка при попытке установить статус "Отменен" (7)
+            if (newStatusId == 7 && currentStatusId != 7)
             {
-                try
+                // Проверяем, есть ли материалы в составе заказа
+                if (_materials.Count > 0)
                 {
-                    using (var service = new OrderService())
-                    {
-                        service.WriteOffMaterialsForDeliveredOrder(_currentOrder.idЗаказ, _materials.ToList());
-                    }
-                    MessageBox.Show("Заказ выдан клиенту. Все материалы списаны со склада.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка при списании материалов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        "Нельзя отменить заказ с материалами в составе!\n\n" +
+                        "Сначала удалите все материалы из состава заказа, а затем попробуйте снова отменить заказ.\n\n" +
+                        "Материалы будут автоматически возвращены на склад (резерв снят) после удаления из состава.",
+                        "Предупреждение",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    
+                    // Возвращаем предыдущий статус
                     cmbxStatusInCard.SelectedValue = currentStatusId;
                     return;
                 }
-            }
 
-            // Автоматическая очистка резервов при отмене заказа (статус 7)
-            if (newStatusId == 7 && currentStatusId != 7)
-            {
                 try
                 {
                     using (var service = new OrderService())
@@ -218,6 +269,41 @@ namespace ComputerServiceManager.Windows
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Ошибка при возврате материалов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    cmbxStatusInCard.SelectedValue = currentStatusId;
+                    return;
+                }
+            }
+
+            // Автоматическое списание материалов при смене статуса на "Выдан клиенту" (6)
+            if (newStatusId == 6 && currentStatusId != 6)
+            {
+                // Предупреждение о безвозвратном списании
+                var confirmResult = MessageBox.Show(
+                    "Внимание! Материалы будут безвозвратно списаны со склада!\n\n" +
+                    "После подтверждения операции восстановление материалов будет невозможно.\n\n" +
+                    "Продолжить?",
+                    "Подтверждение списания",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (confirmResult != MessageBoxResult.Yes)
+                {
+                    // Отменяем смену статуса
+                    cmbxStatusInCard.SelectedValue = currentStatusId;
+                    return;
+                }
+
+                try
+                {
+                    using (var service = new OrderService())
+                    {
+                        service.WriteOffMaterialsForDeliveredOrder(_currentOrder.idЗаказ, _materials.ToList());
+                    }
+                    MessageBox.Show("Заказ выдан клиенту. Все материалы списаны со склада.", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при списании материалов: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     cmbxStatusInCard.SelectedValue = currentStatusId;
                     return;
                 }
