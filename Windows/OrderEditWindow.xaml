@@ -270,6 +270,11 @@
                                                                         <Setter Property="IsEnabled" Value="False"/>
                                                                         <Setter Property="ToolTip" Value="Нельзя изменять состав заказа со статусом 'Выдан клиенту'"/>
                                                                     </DataTrigger>
+                                                                    <!-- Статус заказа = 7 (Отменен) - кнопка активна -->
+                                                                    <DataTrigger Binding="{Binding ElementName=ThisWindow, Path=DataContext.idСтатус}" Value="7">
+                                                                        <Setter Property="IsEnabled" Value="True"/>
+                                                                        <Setter Property="ToolTip" Value="Можно удалить материал из отмененного заказа"/>
+                                                                    </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Button.Style>
@@ -337,6 +342,11 @@
                                                                     <DataTrigger Binding="{Binding ElementName=ThisWindow, Path=DataContext.idСтатус}" Value="6">
                                                                         <Setter Property="IsEnabled" Value="False"/>
                                                                         <Setter Property="ToolTip" Value="Нельзя изменять состав заказа со статусом 'Выдан клиенту'"/>
+                                                                    </DataTrigger>
+                                                                    <!-- Статус заказа = 7 (Отменен) - кнопка активна -->
+                                                                    <DataTrigger Binding="{Binding ElementName=ThisWindow, Path=DataContext.idСтатус}" Value="7">
+                                                                        <Setter Property="IsEnabled" Value="True"/>
+                                                                        <Setter Property="ToolTip" Value="Можно удалить услугу из отмененного заказа"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>

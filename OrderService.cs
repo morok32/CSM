@@ -201,11 +201,32 @@ namespace ComputerServiceManager.Services
         }
 
         /// <summary>
-        /// Отменить заказ с возвратом материалов на склад
+        /// Отменить заказ с возвратом материалов на склад (снятием резерва)
+        /// Возвращает зарезервированные материалы в доступное количество на складе
         /// </summary>
         public void CancelOrderWithReturn(int orderId, List<OrderMaterialItem> materials)
         {
-            ReturnMaterials(orderId, materials);
+            var orderMaterials = _context.СоставЗаказа_Материалы
+                .Where(m => m.idЗаказ == orderId)
+                .ToList();
+
+            foreach (var entity in orderMaterials)
+            {
+                // Возвращаем только зарезервированные материалы (idСтатус == 8)
+                // Списанные материалы (idСтатус == 9) уже физически отсутствуют на складе
+                if (entity.idСтатус == 8)
+                {
+                    // Снимаем резерв - увеличиваем физическое количество на складе
+                    var stock = _context.Склад.FirstOrDefault(s => s.idМатериал == entity.idМатериал);
+                    if (stock != null)
+                    {
+                        stock.Количество += entity.Количество;
+                    }
+                    // Меняем статус на неактивный (снят с резерва)
+                    entity.idСтатус = null; 
+                }
+            }
+            _context.SaveChanges();
         }
 
         /// <summary>
