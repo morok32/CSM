@@ -342,30 +342,12 @@ namespace ComputerServiceManager.Windows
 
         private void txtModel_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //if (txtModel.Text != null)
-            //{
-            //    var trimmed = txtModel.Text.Trim();
-            //    if (txtModel.Text != trimmed)
-            //    {
-            //        int caretIndex = txtModel.CaretIndex;
-            //        txtModel.Text = trimmed;
-            //        txtModel.CaretIndex = Math.Min(caretIndex, txtModel.Text.Length);
-            //    }
-            //}
+            // Логика перемещена в XAML через Binding с UpdateSourceTrigger=PropertyChanged
         }
 
         private void txtSerialNumber_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtSerialNumber.Text != null)
-            {
-                var trimmed = txtSerialNumber.Text.Trim();
-                if (txtSerialNumber.Text != trimmed)
-                {
-                    int caretIndex = txtSerialNumber.CaretIndex;
-                    txtSerialNumber.Text = trimmed;
-                    txtSerialNumber.CaretIndex = Math.Min(caretIndex, txtSerialNumber.Text.Length);
-                }
-            }
+            // Логика перемещена в XAML через Binding с UpdateSourceTrigger=PropertyChanged
         }
 
         private void btnDeleteOrder_Click(object sender, RoutedEventArgs e)
