@@ -96,10 +96,22 @@ namespace ComputerServiceManager.Windows
             cmbMaterialSelect.DisplayMemberPath = "Наименование";
             cmbMaterialSelect.SelectedValuePath = "idМатериала";
 
+            // Блокировка ComboBox материалов для выданных заказов (статус 6)
+            if (_currentOrder.idСтатус == 6)
+            {
+                cmbMaterialSelect.IsEnabled = false;
+            }
+
             var servicesList = _dictContext.Услуги.ToList();
             cmbServiceSelect.ItemsSource = servicesList;
             cmbServiceSelect.DisplayMemberPath = "Наименование";
             cmbServiceSelect.SelectedValuePath = "idУслуги";
+
+            // Блокировка ComboBox услуг для выданных заказов (статус 6)
+            if (_currentOrder.idСтатус == 6)
+            {
+                cmbServiceSelect.IsEnabled = false;
+            }
         }
 
         private void btnAddMaterial_Click(object sender, RoutedEventArgs e)
@@ -149,6 +161,23 @@ namespace ComputerServiceManager.Windows
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
+                }
+
+                // Предупреждение о безвозвратном списании при удалении материала
+                if (item.idПозиции > 0 && item.idСтатус != 9)
+                {
+                    var confirmResult = MessageBox.Show(
+                        "Внимание! Материалы будут безвозвратно списаны со склада!\n\n" +
+                        "После подтверждения операции восстановление материалов будет невозможно.\n\n" +
+                        "Продолжить?",
+                        "Подтверждение списания",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (confirmResult != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
                 }
 
                 // Удаляем позицию из списка (резерв автоматически снимается при сохранении)
@@ -241,17 +270,16 @@ namespace ComputerServiceManager.Windows
             // Проверка при попытке установить статус "Отменен" (7)
             if (newStatusId == 7 && currentStatusId != 7)
             {
-                // Проверяем, есть ли материалы в составе заказа
-                if (_materials.Count > 0)
+                // Предупреждение о возврате материалов на склад
+                var confirmResult = MessageBox.Show(
+                    "Внимание! При отмене заказа все зарезервированные материалы будут возвращены на склад (резерв снят).\n\n" +
+                    "Продолжить?",
+                    "Подтверждение отмены заказа",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (confirmResult != MessageBoxResult.Yes)
                 {
-                    MessageBox.Show(
-                        "Нельзя отменить заказ с материалами в составе!\n\n" +
-                        "Сначала удалите все материалы из состава заказа, а затем попробуйте снова отменить заказ.\n\n" +
-                        "Материалы будут автоматически возвращены на склад (резерв снят) после удаления из состава.",
-                        "Предупреждение",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
-                    
                     // Возвращаем предыдущий статус
                     cmbxStatusInCard.SelectedValue = currentStatusId;
                     return;
@@ -261,7 +289,7 @@ namespace ComputerServiceManager.Windows
                 {
                     using (var service = new OrderService())
                     {
-                        // Снимаем резерв со всех материалов заказа
+                        // Возвращаем все материалы на склад (снимаем резерв)
                         service.CancelOrderWithReturn(_currentOrder.idЗаказ, _materials.ToList());
                     }
                     MessageBox.Show("Заказ отменен. Все материалы возвращены на склад (резервы сняты).", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
