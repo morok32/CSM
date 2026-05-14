@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
 
 namespace ComputerServiceManager.Extensions
@@ -15,7 +15,7 @@ namespace ComputerServiceManager.Extensions
         {
             var parts = new[] { surname, name, patronymic };
             var fullName = string.Join(" ", parts);
-            
+
             // Заменяем множественные пробелы на один и убираем пробелы по краям
             return Regex.Replace(fullName, @"\s+", " ").Trim();
         }

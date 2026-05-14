@@ -1,39 +1,11 @@
-```
-# Compiled files
-*.obj
-*.exe
-*.dll
-*.pdb
-*.userprefs
+# Visual Studio
 
-# Build outputs
+.vs/
+
+*.user
+
 bin/
+
 obj/
-Debug/
-Release/
-x64/
-x86/
 
-# Dependencies
 packages/
-node_modules/
-vendor/
-
-# Logs
-*.log
-
-# Environment
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-Thumbs.db
-```
