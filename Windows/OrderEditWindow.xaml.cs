@@ -88,7 +88,7 @@ namespace ComputerServiceManager.Windows
                 cmbxTechnician.IsEnabled = false;
             }
 
-            var materialsList = _dictContext.Материал.ToList();
+            var materialsList = _dictContext.Материал.Where(m => m.idТипМатериала == 1).ToList();
             cmbMaterialSelect.ItemsSource = materialsList;
             cmbMaterialSelect.DisplayMemberPath = "Наименование";
             cmbMaterialSelect.SelectedValuePath = "idМатериала";
@@ -305,7 +305,7 @@ namespace ComputerServiceManager.Windows
             // Проверяем есть ли материалы у которых idСтатус = 9 (физически списаны)
             var hasWrittenOffMaterials = _materials.Any(m => m.idСтатус == 9);
 
-            // Логика 1.1: Смена с (4,5,6) на (1,2,3) - если есть списанные материалы, нужно сначала вернуть
+            // Смена с (4,5,6) на (1,2,3) - если есть списанные материалы, нужно сначала вернуть
             if ((currentStatusId == 4 || currentStatusId == 5 || currentStatusId == 6) &&
                 (newStatusId == 1 || newStatusId == 2 || newStatusId == 3))
             {
@@ -316,7 +316,7 @@ namespace ComputerServiceManager.Windows
                 }
             }
 
-            // Логика 1.2: Смена с (1,2,3) на (4,5,6) - если нет списанных материалов, нужно сначала списать
+            // Смена с (1,2,3) на (4,5,6) - если нет списанных материалов, нужно сначала списать
             if ((currentStatusId == 1 || currentStatusId == 2 || currentStatusId == 3) &&
                 (newStatusId == 4 || newStatusId == 5 || newStatusId == 6))
             {
@@ -327,7 +327,7 @@ namespace ComputerServiceManager.Windows
                 }
             }
 
-            // Логика 1.3: Смена с 7 (Отменен) на любой другой - если есть списанные материалы, нужно сначала вернуть
+            // Смена с 7 (Отменен) на любой другой - если есть списанные материалы, нужно сначала вернуть
             if (currentStatusId == 7 && newStatusId != 7)
             {
                 if (hasWrittenOffMaterials)
@@ -365,7 +365,7 @@ namespace ComputerServiceManager.Windows
                 return;
             }
 
-            // РЕШЕНИЕ ПРОБЛЕМЫ №2: Автоматическая очистка резервов при отмене заказа (статус 7)
+            // Автоматическая очистка резервов при отмене заказа (статус 7)
             if (newStatusId == 7 && currentStatusId != 7)
             {
                 try
@@ -404,7 +404,6 @@ namespace ComputerServiceManager.Windows
             // Безопасное суммирование
             decimal matTotal = _materials.Sum(m => m.СтоимостьПозиции);
             decimal svcTotal = _services.Sum(s => s.СтоимостьПозиции);
-            //decimal matForPrepayment = _materials.Sum(m => m.СтоимостьПозиции);
 
             txtTotalCostFromStructure.Text = (matTotal + svcTotal).ToString("F2");
             txtOrderPrepayment.Text = (matTotal).ToString("F2");

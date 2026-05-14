@@ -14,6 +14,7 @@ namespace ComputerServiceManager.Models
         private decimal _стоимостьПозиции;
         private int? _idСтатус; // Новый статус: 8=Резерв, 9=Списан
         private bool _isNew;
+        private int? _idТипМатериала;
 
         // ID позиции (если есть в БД)
         public int idПозиции { get => _idПозиции; set { _idПозиции = value; OnPropertyChanged(); } }

@@ -13,47 +13,20 @@ namespace ComputerServiceManager
     {
         private static Пользователь _currentUser;
 
-        /// <summary>
         /// Текущий авторизованный пользователь
-        /// </summary>
         public static Пользователь CurrentUser => _currentUser;
-
-        /// <summary>
         /// ID текущего пользователя
-        /// </summary>
         public static int? CurrentUserId => _currentUser?.idПользователь;
-
-        /// <summary>
         /// Наименование роли текущего пользователя
-        /// </summary>
         public static string CurrentUserRole => _currentUser?.Роль?.Наименование;
-
-        /// <summary>
         /// ID роли текущего пользователя
-        /// </summary>
         public static int? CurrentRoleId => _currentUser?.idРоль;
-
-        /// <summary>
         /// Проверка, авторизован ли пользователь
-        /// </summary>
         public static bool IsAuthenticated => _currentUser != null;
-
-        /// <summary>
         /// Проверка, является ли текущий пользователь администратором
-        /// </summary>
         public static bool IsAdmin => string.Equals(CurrentUserRole, "Администратор", StringComparison.OrdinalIgnoreCase);
-
-        /// <summary>
         /// Проверка, является ли текущий пользователь техником
-        /// </summary>
         public static bool IsTechnician => string.Equals(CurrentUserRole, "Техник", StringComparison.OrdinalIgnoreCase);
-
-        /// <summary>
-        /// Аутентификация пользователя по логину и паролю
-        /// </summary>
-        /// <param name="login">Логин</param>
-        /// <param name="password">Пароль</param>
-        /// <returns>Пользователь если аутентификация успешна, иначе null</returns>
         public static Пользователь Authenticate(string login, string password)
         {
             using (var context = ComputerServiceManagerEntities.GetContext())
